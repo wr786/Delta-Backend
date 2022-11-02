@@ -30,6 +30,7 @@ def add_post_info(id, tags, info, picture_url):
       db.session.add(cur_info)
       db.session.commit()
    except Exception as e:
+      db.session.rollback() # 回滚
       print('[Error]', e, 'in add info')
       return 
 
@@ -74,6 +75,8 @@ def delete_post_info(id):
          db.session.delete(cur_info)
          db.session.commit()
    except Exception as e:
+      if e != ValueError:
+         db.session.rollback() # 回滚
       print('[Error]', e, 'in delete info: No such post info')
       return
    
@@ -96,10 +99,12 @@ def change_post_info(id, tags=None, info=None, picture_url=None):
             cur_info.info = info
          if picture_url:
             cur_info.picture_url =picture_url
+         db.session.commit()
    except Exception as e:
+      if e != ValueError:
+            db.session.rollback() # 回滚
       print('[Error]', e, 'in change info: No such post info')
       return
-   db.session.commit()
 
    print('Successfully change id=%d post info!' % id)
 
