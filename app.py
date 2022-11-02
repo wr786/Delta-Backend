@@ -1,7 +1,7 @@
 from flask import Flask
 from views import test
 import config
-from post_info import post_info, db
+from modules.post_info import post_info, db
 
 app = Flask(__name__)
 # register blueprint
