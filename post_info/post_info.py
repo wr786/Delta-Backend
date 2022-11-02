@@ -25,37 +25,83 @@ class PostInfo(db.Model):
 
 # 插入数据
 def add_post_info(id, tags, info, picture_url):
-   cur_info = PostInfo(id, tags, info, picture_url)
-   db.session.add(cur_info)
-   db.session.commit()
+   try:
+      cur_info = PostInfo(id, tags, info, picture_url)
+      db.session.add(cur_info)
+      db.session.commit()
+   except Exception as e:
+      print('[Error]', e, 'in add info')
+      return 
+
+   print('Successfully add id=%d post info!' % id)
+
 
 # 查询数据
-def find_post_info(id=None, tags=None, info=None, picture_url=None):
+def search_post_info(id=None, tags=None, info=None, picture_url=None):
    if id != None: # id精确查询
-      return PostInfo.query.filter_by(id=id).all()
-   if tags != None: # tags模糊查询 tags这里应该是list
+      try:
+         return PostInfo.query.filter_by(id=id).all()
+      except Exception as e:
+         print('[Error]', e, 'in search info: Id search')
+         return []
+   elif tags != None: # tags模糊查询 tags这里应该是list
       for tag in tags:
          tag = '%'+tag+'%'
-      return PostInfo.query.filter(tags).all()
+      try:
+         return PostInfo.query.filter(tags).all()
+      except Exception as e:
+         print('[Error]', e, 'in search info: Tags search')
+         return []
    else:
-      return PostInfo.query.all()
+      try:
+         return PostInfo.query.all()
+      except Exception as e:
+         print('[Error]', e, 'in search info: No-limit search')
+         return []
+   
+   
 
 # 删除数据
-def find_post_info(id):
-   cur_info = PostInfo.query.filter_by(id=id).first()
-   db.session.delete(cur_info)
-   db.session.commit()
+def delete_post_info(id):
+   try:
+      cur_info = PostInfo.query.filter_by(id=id).first()
+   except Exception as e:
+      print('[Error]', e, 'in delete info: Search info error')
+   try:
+      if cur_info == None:
+         raise ValueError
+      else:
+         db.session.delete(cur_info)
+         db.session.commit()
+   except Exception as e:
+      print('[Error]', e, 'in delete info: No such post info')
+      return
+   
+   print('Successfully delete id=%d post info!' % id)
 
 # 修改数据
 def change_post_info(id, tags=None, info=None, picture_url=None):
-   cur_info = PostInfo.query.filter_by(id=id).first()
-   if tags: # 标准的Str
-      cur_info.tags = tags
-   if info:
-      cur_info.info = info
-   if picture_url:
-      cur_info.picture_url =picture_url
-   
+   try:
+      cur_info = PostInfo.query.filter_by(id=id).first()
+   except Exception as e:
+      print('[Error]', e, 'in change info: Search info Error')
+      return
+   try:
+      if cur_info == None:
+         raise ValueError
+      else:
+         if tags: # 标准的Str
+            cur_info.tags = tags
+         if info:
+            cur_info.info = info
+         if picture_url:
+            cur_info.picture_url =picture_url
+   except Exception as e:
+      print('[Error]', e, 'in change info: No such post info')
+      return
    db.session.commit()
+
+   print('Successfully change id=%d post info!' % id)
+
 
 
