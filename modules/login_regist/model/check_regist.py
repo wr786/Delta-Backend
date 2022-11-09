@@ -1,12 +1,14 @@
 from ..lrconfig import conn
 import re
+import hashlib
 
 cur = conn.cursor()
 
 def add_user(username, email, password):
     try:
         conn.ping(reconnect=True)
-        sql = "INSERT INTO user(username, email, password) VALUES ('%s','%s','%s')" %(username, email, password)
+        encrypted=encrypt(password)
+        sql = "INSERT INTO user(username, email, password) VALUES ('%s','%s','%s')" %(username, email, encrypted)
         cur.execute(sql)
         conn.commit()  # 对数据库内容有改变，需要commit()
         print('add_user success')
@@ -35,3 +37,8 @@ def regist_null(username,email,password):
     except Exception as e:
         print('[Error]', e, 'in regist_null')
         return
+
+def encrypt(pwd): 
+    sha = hashlib.sha256(pwd.encode('utf-8'))
+    encrypted = sha.hexdigest()
+    return encrypted       

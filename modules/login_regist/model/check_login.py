@@ -1,49 +1,44 @@
 from ..lrconfig import conn
+import re
+import hashlib
+
 cur = conn.cursor()
 
+def add_user(username, email, password):
+    try:
+        conn.ping(reconnect=True)
+        encrypted=encrypt(password)
+        sql = "INSERT INTO user(username, email, password) VALUES ('%s','%s','%s')" %(username, email, encrypted)
+        cur.execute(sql)
+        conn.commit()  # 对数据库内容有改变，需要commit()
+        print('add_user success')
+    except Exception as e:
+        print('[Error]', e, 'in add_user')
+        return
 
-def login_null(email,password):
-	if(email==''or password==''):
-		return True
-	else:
-		return False
+def check_pku(email):
+    try:
+        pattern= r'^[0-9a-zA-Z_-]+@stu.pku.edu.cn$'
+        if re.match(pattern,email):
+            return True
+        else:
+            return False
+    except Exception as e:
+        print('[Error]', e, 'in check_pku')
+        return
 
 
-def is_existed(email,password):
-	try:
-		conn.ping(reconnect=True)
-		sql="SELECT * FROM user WHERE email ='%s' and password ='%s'" %(email,password)
-		cur.execute(sql)
-		result = cur.fetchall()
-		if (len(result) == 0):
-			return False
-		else:
-			return True
-	except Exception as e:
-		print('[Error]', e, 'in is_existed')
-		return
+def regist_null(username,email,password):
+    try:
+        if(username=='' or email==''or password==''):
+            return True
+        else:
+            return False
+    except Exception as e:
+        print('[Error]', e, 'in regist_null')
+        return
 
-def exist_user(email):
-	try:
-		conn.ping(reconnect=True)
-		sql = "SELECT * FROM user WHERE email ='%s'" % (email)
-		cur.execute(sql)
-		result = cur.fetchall()
-		if (len(result) == 0):
-			return False
-		else:
-			return True
-	except Exception as e:
-		print('[Error]', e, 'in exist_user')
-		return
-
-def getinfo(email):
-	try:
-		conn.ping(reconnect=True)
-		sql="SELECT * FROM user WHERE email ='%s'" % (email)
-		cur.execute(sql)
-		result=cur.fetchone() #tuple=(username，email，password，id)
-		return result
-	except Exception as e:
-		print('[Error]', e, 'in getinfo')
-		return
+def encrypt(pwd): 
+    sha = hashlib.sha256(pwd.encode('utf-8'))
+    encrypted = sha.hexdigest()
+    return encrypted       
