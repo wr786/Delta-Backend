@@ -41,7 +41,7 @@ def show_post(message):
     total_page //= limit
     ret = []
     for per in res:
-        ret.append((per.id, per.picture))
+        ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
     emit('post_info_response', {'result': 'Search Success', 'lst': ret, 'cur_page': message['cur_page'], 'total_page': total_page})
 
 
