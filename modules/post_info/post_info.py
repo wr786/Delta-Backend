@@ -11,22 +11,20 @@ class PostInfo(db.Model):
    # 表名
    __tablename__ = 'post_info'
    # 字段
-   id = db.Column('post_info_id', db.Integer, primary_key = True)
+   id = db.Column('post_info_id', db.Integer, primary_key = True, auto_increment = True)
+   headline = db.Column(db.String(100))
    tags = db.Column(db.String(100))
    info = db.Column(db.String(200))
-   picture_url = db.Column(db.String(200)) 
-
-   def __init__(self, id, tags, info, picture_url):
-      self.id = id
-      self.tags = tags
-      self.info = info
-      self.picture_url = picture_url
-
+   picture = db.Column(db.String(5000)) 
 
 # 插入数据
-def add_post_info(id, tags, info, picture_url):
+def add_post_info(headline, tags, info, picture):
    try:
-      cur_info = PostInfo(id, tags, info, picture_url)
+      cur_info = PostInfo()
+      cur_info.headline = headline
+      cur_info.tags = tags
+      cur_info.info = info
+      cur_info.picture = picture
       db.session.add(cur_info)
       db.session.commit()
    except Exception as e:
@@ -34,11 +32,11 @@ def add_post_info(id, tags, info, picture_url):
       print('[Error]', e, 'in add info')
       return 
 
-   print('Successfully add id=%d post info!' % id)
+   print('Successfully add id=%d post info!' % cur_info.id)
 
 
 # 查询数据
-def search_post_info(id=None, tags=None, info=None, picture_url=None):
+def search_post_info(id=None, tags=None, info=None, picture=None):
    if id != None: # id精确查询
       try:
          return PostInfo.query.filter_by(id=id).all()
@@ -83,7 +81,7 @@ def delete_post_info(id):
    print('Successfully delete id=%d post info!' % id)
 
 # 修改数据
-def change_post_info(id, tags=None, info=None, picture_url=None):
+def change_post_info(id, tags=None, info=None, picture=None):
    try:
       cur_info = PostInfo.query.filter_by(id=id).first()
    except Exception as e:
@@ -97,8 +95,8 @@ def change_post_info(id, tags=None, info=None, picture_url=None):
             cur_info.tags = tags
          if info:
             cur_info.info = info
-         if picture_url:
-            cur_info.picture_url =picture_url
+         if picture:
+            cur_info.picture =picture
          db.session.commit()
    except Exception as e:
       if e != ValueError:

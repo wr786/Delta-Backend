@@ -17,16 +17,20 @@ app.register_blueprint(post_info)
 # load config file
 app.config.from_object(config)
 db.init_app(app)
-socketio = SocketIO(app)
+socketio = SocketIO(app, cors_allowed_origins="*")
 
+@app.route('/')
+def test():
+    return "Hello World!"
 
 @socketio.on('Add Post Info', namespace='/post')
 def new_post(message):
+    print("test")
     flag = add_post_info(message['headline'], message['tags'], message['info'], message['picture'])
     if flag:
         emit('post_info_response', {'result':'Post Success'})
     else:
-         emit('post_info_response', {'result':'Post Failure'})
+        emit('post_info_response', {'result':'Post Failure'})
 
 
 
@@ -62,7 +66,7 @@ def change_page(message):
     emit('post_info_response', {'result': 'Change Page Success', 'lst': ret})
 
 if __name__ == '__main__':
-    # with app.app_context():
-    #     db.drop_all()
-    #     db.create_all()
-    socketio.run(app, debug=True)
+    with app.app_context():
+        db.drop_all()
+        db.create_all()
+    socketio.run(app, port=5001, debug=True)
