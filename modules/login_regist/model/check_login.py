@@ -1,8 +1,8 @@
-from lrconfig import conn
+from ..lrconfig import conn
 cur = conn.cursor()
 
 
-def is_null(email,password):
+def login_null(email,password):
 	if(email==''or password==''):
 		return True
 	else:
@@ -10,28 +10,40 @@ def is_null(email,password):
 
 
 def is_existed(email,password):
-	conn.ping(reconnect=True)
-	sql="SELECT * FROM user WHERE email ='%s' and password ='%s'" %(email,password)
-	cur.execute(sql)
-	result = cur.fetchall()
-	if (len(result) == 0):
-		return False
-	else:
-		return True
+	try:
+		conn.ping(reconnect=True)
+		sql="SELECT * FROM user WHERE email ='%s' and password ='%s'" %(email,password)
+		cur.execute(sql)
+		result = cur.fetchall()
+		if (len(result) == 0):
+			return False
+		else:
+			return True
+	except Exception as e:
+		print('[Error]', e, 'in is_existed')
+		return
 
 def exist_user(email):
-	conn.ping(reconnect=True)
-	sql = "SELECT * FROM user WHERE email ='%s'" % (email)
-	cur.execute(sql)
-	result = cur.fetchall()
-	if (len(result) == 0):
-		return False
-	else:
-		return True
+	try:
+		conn.ping(reconnect=True)
+		sql = "SELECT * FROM user WHERE email ='%s'" % (email)
+		cur.execute(sql)
+		result = cur.fetchall()
+		if (len(result) == 0):
+			return False
+		else:
+			return True
+	except Exception as e:
+		print('[Error]', e, 'in exist_user')
+		return
 
 def getinfo(email):
-	conn.ping(reconnect=True)
-	sql="SELECT * FROM user WHERE email ='%s'" % (email)
-	cur.execute(sql)
-	result=cur.fetchall() #tuple=(username，email，password，id)
-	return result
+	try:
+		conn.ping(reconnect=True)
+		sql="SELECT * FROM user WHERE email ='%s'" % (email)
+		cur.execute(sql)
+		result=cur.fetchone() #tuple=(username，email，password，id)
+		return result
+	except Exception as e:
+		print('[Error]', e, 'in getinfo')
+		return
