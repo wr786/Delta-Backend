@@ -1,13 +1,13 @@
-from ..lrconfig import conn
+from ..connect import conn
 import hashlib
 cur = conn.cursor()
 
-
 def login_null(email,password):
-	if(email==''or password=='')
+	if(email==''or password==''):
 		return True
 	else:
 		return False
+
 
 
 def is_existed(email,password):
