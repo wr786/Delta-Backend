@@ -26,41 +26,41 @@ class UserInfo(db.Model):
 
 
 # 插入数据
-def add_post_info( id, name, email,info, picture_url):
+def add_user_info( id, name, email,info, picture_url):
    try:
       cur_info = UserInfo( id, name, email,info, picture_url)
       db.session.add(cur_info)
       db.session.commit()
    except Exception as e:
-      print('[Error]', e, 'in add info')
+      print('[Error]', e, 'in add user info')
       return 
 
-   print('Successfully add id=%d post info!' % id)
+   print('Successfully add id=%d user info!' % id)
 
 
 # 查询数据
-def search_post_info(id=None,  name=None, email=None, info=None, picture_url=None):
+def search_user_info(id=None,  name=None, email=None, info=None, picture_url=None):
    if id != None: # id精确查询
       try:
          return UserInfo.query.filter_by(id=id).all()
       except Exception as e:
-         print('[Error]', e, 'in search info: Id search')
+         print('[Error]', e, 'in search user: Id search')
          return []
    else:
       try:
          return UserInfo.query.all()
       except Exception as e:
-         print('[Error]', e, 'in search info: No-limit search')
+         print('[Error]', e, 'in search user: No-limit search')
          return []
 
 
 
 # 删除数据
-def delete_post_info(id):
+def delete_user_info(id):
    try:
       cur_info = UserInfo.query.filter_by(id=id).first()
    except Exception as e:
-      print('[Error]', e, 'in delete info: Search info error')
+      print('[Error]', e, 'in delete user: Search user error')
    try:
       if cur_info == None:
          raise ValueError
@@ -68,17 +68,17 @@ def delete_post_info(id):
          db.session.delete(cur_info)
          db.session.commit()
    except Exception as e:
-      print('[Error]', e, 'in delete info: No such post info')
+      print('[Error]', e, 'in delete user: No such user info')
       return
 
-   print('Successfully delete id=%d post info!' % id)
+   print('Successfully delete id=%d user info!' % id)
 
 # 修改数据
-def change_post_info(id,  name=None, email=None, info=None, picture_url=None):
+def change_user_info(id,  name=None, email=None, info=None, picture_url=None):
    try:
       cur_info = UserInfo.query.filter_by(id=id).first()
    except Exception as e:
-      print('[Error]', e, 'in change info: Search info Error')
+      print('[Error]', e, 'in change user info: Search info Error')
       return
    try:
       if cur_info == None:
@@ -93,8 +93,8 @@ def change_post_info(id,  name=None, email=None, info=None, picture_url=None):
          if picture_url:
             cur_info.picture_url =picture_url
    except Exception as e:
-      print('[Error]', e, 'in change info: No such post info')
+      print('[Error]', e, 'in change user info: No such user info')
       return
    db.session.commit()
 
-   print('Successfully change id=%d post info!' % id)
+   print('Successfully change id=%d user info!' % id)
