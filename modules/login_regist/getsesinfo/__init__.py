@@ -1,0 +1,1 @@
+from login_regist.getsesinfo.getsesinfo import getsesinfo_blue
