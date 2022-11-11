@@ -1,4 +1,4 @@
-from ..lrconfig import conn
+from ..connect import conn
 import re
 import hashlib
 
