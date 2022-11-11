@@ -1,4 +1,4 @@
-from flask import Blueprint,request,render_template,redirect
+from flask import Blueprint,request,render_template,redirect,session
 from ..model.check_regist import add_user
 from ..model.check_login import getinfo,is_existed,exist_user,login_null
 
@@ -21,6 +21,9 @@ def user_login():
                 dict['login_massage']='success: welcome back'
                 dict['username']=info[0]
                 dict['userid']=info[3]
+                session['username']=info[0]
+                session['email']=info[1]
+                session['userid']=info[3]
                 return dict           #0=登录成功
             elif exist_user(email):
                 dict['login_code']='2'
