@@ -1,0 +1,24 @@
+from flask import Blueprint,request,render_template,redirect,session
+from ..model.check_regist import add_user
+from ..model.check_login import getinfo,is_existed,exist_user,login_null
+
+logout_blue=Blueprint('logout',__name__,url_prefix='/logout')
+
+@logout_blue.route('/',methods=["GET","POST"])
+def user_logout():
+    if request.method=="POST":
+        try:
+            logout=request.form['logout']
+            if logout=='True':
+                session.clear()
+                dict={}
+                dict['logout_message']='success: logout'
+                return dict
+            else:
+                dict={}
+                dict['logout_message']='fail: logout'
+                return dict
+        except Exception as e:
+            print('[Error]', e, 'in logout')
+            return
+    return    "/logout"    
