@@ -9,6 +9,7 @@ def getsesinfo():
     if request.method=='POST':
         try:
             dict={}
+            dict['getsesinfo_message']='success'
             dict['username']=session.get('username')
             dict['email']=session.get('email')
             dict['userid']=session.get('userid')

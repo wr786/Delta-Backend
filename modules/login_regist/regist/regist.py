@@ -14,20 +14,20 @@ def user_regist():
             dict={}
             if regist_null(username,email,password):
                 dict['regist_code']='-1'
-                dict['regist_massage']='fail:need username, email and password'
+                dict['regist_message']='fail:need username, email and password'
                 return dict
             elif not check_pku(email):
                 dict['regist_code']='2'
-                dict['regist_massage']='fail:email adress must be @stu.pku.edu.cn'
+                dict['regist_message']='fail:email adress must be @stu.pku.edu.cn'
                 return dict              #2=不是PKU邮箱
             elif exist_user(email):
                 dict['regist_code']='1'
-                dict['regist_massage']='fail:email has been registered'
+                dict['regist_message']='fail:email has been registered'
                 return dict                        #1=用户已存在
             else:
                 add_user(request.form['username'],request.form['email'], request.form['password'] )
                 dict['regist_code']='0'
-                dict['regist_massage']='success:welcome to delta'
+                dict['regist_message']='success:welcome to delta'
                 return dict                       #0=注册成功   id为auto_increment
         except Exception as e:
             print('[Error]', e, 'in regist')

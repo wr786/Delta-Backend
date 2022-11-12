@@ -13,12 +13,12 @@ def user_login():
             dict={}
             if login_null(email,password):
                 dict['login_code']='-1'
-                dict['login_massage']='fail:need email and password'
+                dict['login_message']='fail:need email and password'
                 return dict           #-1=需要邮箱和密码
             elif is_existed(email, password):
                 info=getinfo(email)     #获得账户信息 info[0]=username  info[1]=id ,暂时用id代替token？
                 dict['login_code']='0'
-                dict['login_massage']='success: welcome back'
+                dict['login_message']='success: welcome back'
                 dict['username']=info[0]
                 dict['userid']=info[3]
                 session['username']=info[0]
@@ -27,11 +27,11 @@ def user_login():
                 return dict           #0=登录成功
             elif exist_user(email):
                 dict['login_code']='2'
-                dict['login_massage']='fail:wrong password'
+                dict['login_message']='fail:wrong password'
                 return dict             #2=密码错误
             else:
                 dict['login_code']='1'
-                dict['login_massage']='fail:no such account'
+                dict['login_message']='fail:no such account'
                 return dict             #1=不存在该用户
         except Exception as e:
             print('[Error]', e, 'in login')
