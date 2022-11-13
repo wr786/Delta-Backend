@@ -1,6 +1,7 @@
 from flask import Blueprint,request,render_template,redirect,session
 from ..model.check_regist import add_user
 from ..model.check_login import getinfo,is_existed,exist_user,login_null
+import json
 
 login_blue=Blueprint('login',__name__,url_prefix='/login')
 
@@ -8,8 +9,9 @@ login_blue=Blueprint('login',__name__,url_prefix='/login')
 def user_login():
     if request.method=='POST':  # 注册发送的请求为POST请求
         try:
-            email = request.form['email']
-            password = request.form['password']
+            data=json.loads(request.data)
+            email = data['email']
+            password = data['password']
             dict={}
             if login_null(email,password):
                 dict['login_code']='-1'
