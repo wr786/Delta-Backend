@@ -10,6 +10,7 @@ def create_conv_settings(convId, uidList):
             )
             db.session.add(convSetting)
         db.session.commit()
+        return 0, f'[Info] Create convSetting successfully!'
     except Exception as e:
         db.session.rollback()
         return -1, f'[Error] {e} when creating conversationSettings with convId={convId}, uidList={uidList}'
