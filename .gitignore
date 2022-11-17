@@ -131,6 +131,7 @@ dmypy.json
 
 # config
 config.py
+package-lock.json
 
 # MacOS
 .DS_Store
