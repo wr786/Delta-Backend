@@ -45,6 +45,12 @@ def show_post(message):
     emit('post_info_response', {'result': 'Search Success', 'lst': ret, 'cur_page': message['cur_page'], 'total_page': total_page})
 
 
+@socketio.on('Search for Another Page', namespace='/list')
+def change_page(message):
+    ret = []
+    emit('post_info_response', {'result': 'Change Page Success', 'lst': ret})
+
+
 @socketio.on('Open Post Info', namespace='/detail')
 def open_post(message):
     res = search_post_info(id=message['id'])
@@ -57,12 +63,6 @@ def open_post(message):
     else:
         res = res[0] # 肯定只有一个
         emit('post_info_response', {'result':'Open Post Success', 'id': res.id, 'headline': res.headline, 'tags': res.tags, 'info': res.info, 'picture': res.picture})
-
-
-@socketio.on('Search for Another Page', namespace='/list')
-def change_page(message):
-    ret = []
-    emit('post_info_response', {'result': 'Change Page Success', 'lst': ret})
 
 if __name__ == '__main__':
     # with app.app_context():
