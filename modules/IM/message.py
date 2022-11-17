@@ -24,7 +24,7 @@ def send_message(sender, convId, content):
         db.session.rollback()
         return -1, f'[Error] {e} when sending message with sender={sender}, convId={convId}'
 
-def get_all_message(convId):
+def get_all_message_by_conv(convId):
     try:
         conv = ConvInfo.query.filter(id=convId).one()
         if conv is None:
@@ -33,7 +33,18 @@ def get_all_message(convId):
         allMsg = Message.query.filter_by(convId=convId).all().order_by(id.desc())
         return 0, allMsg
     except Exception as e:
-        return -1, f'[Error] Get all message of {convId} failed: {e}'
+        return -1, f'[Error] Get all message of convId={convId} failed: {e}'
+
+def get_all_message_by_user(uid):
+    try:
+        user = UserInfo.query.filter(id=uid).one()
+        if user is None:
+            raise KeyError('User not exist!')
+
+        allMsg = Message.query.filter_by(uid=uid).all().order_by(id.desc())
+        return 0, allMsg
+    except Exception as e:
+        return -1, f'[Error] Get all message of uid={uid} failed: {e}'
 
 def get_recent_message_by_conv(convId):
     try:

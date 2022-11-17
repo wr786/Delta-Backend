@@ -7,10 +7,12 @@ import convSetting
 def create_conv_private(uidList):
     uidList = sorted(uidList)   #  按uid大小排序
     try:
+        if len(uidList) != 2:
+            raise ValueError('uidList length != 2!')
         user1 = UserInfo.query.filter(id=uidList[0]).one()
         user2 = UserInfo.query.filter(id=uidList[1]).one()
         if user1 is None or user2 is None:
-            raise ValueError('User not exist!')
+            raise KeyError('User not exist!')
         if ConvInfo.query.filter_by(convLongId=utils.get_convLongId(uidList)).count() == 0:
             raise ValueError('Duplicate private conversation!')        
             
