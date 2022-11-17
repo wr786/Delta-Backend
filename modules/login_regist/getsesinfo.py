@@ -1,6 +1,6 @@
 from flask import Blueprint,request,render_template,redirect,session
-from ..model.check_regist import add_user
-from ..model.check_login import getinfo,is_existed,exist_user,login_null
+from .model.check_regist import add_user
+from .model.check_login import getinfo,is_existed,exist_user,login_null
 
 getsesinfo_blue=Blueprint('getsesinfo',__name__,url_prefix='/getsesinfo')
 

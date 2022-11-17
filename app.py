@@ -4,19 +4,17 @@ from socket import socket
 # from tkinter.font import names
 from flask import Flask,session
 from flask_socketio import SocketIO, emit
-from views import test
 import config
 from modules.post_info import post_info, db
 from modules.post_info import add_post_info, search_post_info, delete_post_info, change_post_info
-from modules.login_regist.login import login_blue
-from modules.login_regist.regist import regist_blue
-from modules.login_regist.getsesinfo import getsesinfo_blue
-from modules.login_regist.logout import logout_blue
+from modules.login_regist import login_blue
+from modules.login_regist import regist_blue
+from modules.login_regist import getsesinfo_blue
+from modules.login_regist import logout_blue
 
 app = Flask(__name__)
 app.secret_key=config.SECRET_KEY
 # register blueprint
-app.register_blueprint(test.test)
 app.register_blueprint(post_info)
 app.register_blueprint(login_blue)
 app.register_blueprint(regist_blue)
