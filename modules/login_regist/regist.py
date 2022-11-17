@@ -1,6 +1,6 @@
 from flask import Blueprint,request,render_template,redirect
-from ..model.check_regist import add_user,check_pku,regist_null
-from ..model.check_login import getinfo,is_existed,exist_user,login_null
+from .model.check_regist import add_user,check_pku,regist_null
+from .model.check_login import getinfo,is_existed,exist_user,login_null
 import json
 regist_blue=Blueprint('regist',__name__,url_prefix='/regist')
 

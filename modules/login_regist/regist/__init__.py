@@ -1,1 +1,0 @@
-from login_regist.regist.regist import regist_blue

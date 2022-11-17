@@ -4,19 +4,17 @@ from socket import socket
 # from tkinter.font import names
 from flask import Flask,session
 from flask_socketio import SocketIO, emit
-from views import test
 import config
 from modules.post_info import post_info, db
 from modules.post_info import add_post_info, search_post_info, delete_post_info, change_post_info
-from modules.login_regist.login import login_blue
-from modules.login_regist.regist import regist_blue
-from modules.login_regist.getsesinfo import getsesinfo_blue
-from modules.login_regist.logout import logout_blue
+from modules.login_regist import login_blue
+from modules.login_regist import regist_blue
+from modules.login_regist import getsesinfo_blue
+from modules.login_regist import logout_blue
 
 app = Flask(__name__)
 app.secret_key=config.SECRET_KEY
 # register blueprint
-app.register_blueprint(test.test)
 app.register_blueprint(post_info)
 app.register_blueprint(login_blue)
 app.register_blueprint(regist_blue)
@@ -53,6 +51,12 @@ def show_post(message):
     emit('post_info_response', {'result': 'Search Success', 'lst': ret, 'cur_page': message['cur_page'], 'total_page': total_page})
 
 
+@socketio.on('Search for Another Page', namespace='/list')
+def change_page(message):
+    ret = []
+    emit('post_info_response', {'result': 'Change Page Success', 'lst': ret})
+
+
 @socketio.on('Open Post Info', namespace='/detail')
 def open_post(message):
     res = search_post_info(id=message['id'])
@@ -65,12 +69,6 @@ def open_post(message):
     else:
         res = res[0] # 肯定只有一个
         emit('post_info_response', {'result':'Open Post Success', 'id': res.id, 'headline': res.headline, 'tags': res.tags, 'info': res.info, 'picture': res.picture})
-
-
-@socketio.on('Search for Another Page', namespace='/list')
-def change_page(message):
-    ret = []
-    emit('post_info_response', {'result': 'Change Page Success', 'lst': ret})
 
 if __name__ == '__main__':
     # with app.app_context():
