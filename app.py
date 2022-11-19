@@ -1,6 +1,8 @@
 from argparse import Namespace
+from functools import total_ordering
 from mailbox import mboxMessage
 from socket import socket
+from sre_parse import ESCAPES
 # from tkinter.font import names
 from flask import Flask,session
 from flask_socketio import SocketIO, emit
@@ -44,17 +46,28 @@ def new_post(message):
 def show_post(message):
     limit = 15
     res, total_page = search_post_info(tags=message['tags'], limit=limit, offset=(message['cur_page']-1)*15)
-    total_page //= limit
-    ret = []
-    for per in res:
-        ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
-    emit('post_info_response', {'result': 'Search Success', 'lst': ret, 'cur_page': message['cur_page'], 'total_page': total_page})
+    if total_page == 0:
+            emit('post_info_response', {'result': 'Search Failure', 'lst': [], 'cur_page': message['cur_page'], 'total_page': total_page})
+    else:
+        total_page = total_page // limit + 1
+        ret = []
+        for per in res:
+            ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
+        emit('post_info_response', {'result': 'Search Success', 'lst': ret, 'cur_page': message['cur_page'], 'total_page': total_page})
 
 
 @socketio.on('Search for Another Page', namespace='/list')
 def change_page(message):
-    ret = []
-    emit('post_info_response', {'result': 'Change Page Success', 'lst': ret})
+    limit = 15
+    res, total_page = search_post_info(tags=message['tags'], limit=limit, offset=(message['cur_page']-1)*15)
+    if total_page == 0:
+            emit('post_info_response', {'result': 'Change Page Failure', 'lst': [], 'cur_page': message['cur_page'], 'total_page': total_page})
+    else:
+        total_page = total_page // limit + 1
+        ret = []
+        for per in res:
+            ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
+        emit('post_info_response', {'result': 'Change Page Success', 'lst': ret, 'cur_page': message['cur_page'], 'total_page': total_page})
 
 
 @socketio.on('Open Post Info', namespace='/detail')
