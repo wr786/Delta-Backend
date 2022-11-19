@@ -21,8 +21,9 @@ class Message(db.Model):
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, notnull=True)
     sender = db.Column(db.Integer) # , db.ForeignKey('user.id'))
-    convId = db.Column(db.Integer, db.ForeignKey('conv_info.id'))
+    convId = db.Column(db.Integer, db.ForeignKey('conv_info.id'), index=True)
     content = db.Column(db.String(1000))
+    createTime = db.Column(db.DateTime, default=datetime.now)
     # 本来应该还要考虑消息有序性问题，但考虑到我们的服务QPS很低，直接用id排序得了
 
     def __init__(self, **kwargs):
@@ -33,9 +34,8 @@ class ConvSetting(db.Model):
     __tablename__ = 'conv_setting'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True, notnull=True)
-    uid = db.Column(db.Integer)
-    convId = db.Column(db.Integer, db.ForeignKey('conv_info.id'))
-    createTime = db.Column(db.DateTime, default=datetime.now)
+    uid = db.Column(db.Integer, index=True)
+    convId = db.Column(db.Integer, db.ForeignKey('conv_info.id'), index=True)
     # readTilMid = db.Column(db.Integer)  # 已读计数
 
     def __init__(self, **kwargs):
