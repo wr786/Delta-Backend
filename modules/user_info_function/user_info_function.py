@@ -32,10 +32,10 @@ def add_user_info( id, name, email,info, picture_url):
       db.session.add(cur_info)
       db.session.commit()
    except Exception as e:
-      print('[Error]', e, 'in add info')
+      print('[Error]', e, 'in add user info')
       return 
 
-   print('Successfully add id=%d post info!' % id)
+   print('Successfully add id=%d user info!' % id)
 
 
 # 查询数据
@@ -62,7 +62,7 @@ def delete_user_info(id):
    try:
       cur_info = UserInfo.query.filter_by(id=id).first()
    except Exception as e:
-      print('[Error]', e, 'in delete user: Search info error')
+      print('[Error]', e, 'in delete user: Search user info error')
    try:
       if cur_info == None:
          raise ValueError
