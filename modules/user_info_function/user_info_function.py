@@ -46,8 +46,7 @@ def search_user_info(id=None,  name=None, email=None, info=None, picture_url=Non
       except Exception as e:
          db.session.rollback() # 回滚
          print('[Error]', e, 'in search user: Id search')
-         return [],0
-   else:
+         return []
       try:
          return UserInfo.query.all()
       except Exception as e:
