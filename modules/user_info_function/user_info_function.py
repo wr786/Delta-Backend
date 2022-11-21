@@ -32,10 +32,10 @@ def add_user_info( id, name, email,info, picture_url):
       db.session.add(cur_info)
       db.session.commit()
    except Exception as e:
-      print('[Error]', e, 'in add user info')
+      print('[Error]', e, 'in add info')
       return 
 
-   print('Successfully add id=%d user info!' % id)
+   print('Successfully add id=%d post info!' % id)
 
 
 # 查询数据
@@ -44,12 +44,14 @@ def search_user_info(id=None,  name=None, email=None, info=None, picture_url=Non
       try:
          return UserInfo.query.filter_by(id=id).all()
       except Exception as e:
+         db.session.rollback() # 回滚
          print('[Error]', e, 'in search user: Id search')
-         return []
+         return [],0
    else:
       try:
          return UserInfo.query.all()
       except Exception as e:
+         db.session.rollback() # 回滚
          print('[Error]', e, 'in search user: No-limit search')
          return []
 
@@ -60,7 +62,7 @@ def delete_user_info(id):
    try:
       cur_info = UserInfo.query.filter_by(id=id).first()
    except Exception as e:
-      print('[Error]', e, 'in delete user: Search user error')
+      print('[Error]', e, 'in delete user: Search info error')
    try:
       if cur_info == None:
          raise ValueError
@@ -68,6 +70,8 @@ def delete_user_info(id):
          db.session.delete(cur_info)
          db.session.commit()
    except Exception as e:
+      if e != ValueError:
+         db.session.rollback() # 回滚
       print('[Error]', e, 'in delete user: No such user info')
       return
 
@@ -78,7 +82,7 @@ def change_user_info(id,  name=None, email=None, info=None, picture_url=None):
    try:
       cur_info = UserInfo.query.filter_by(id=id).first()
    except Exception as e:
-      print('[Error]', e, 'in change user info: Search info Error')
+      print('[Error]', e, 'in change user info: Search user info Error')
       return
    try:
       if cur_info == None:
@@ -92,9 +96,12 @@ def change_user_info(id,  name=None, email=None, info=None, picture_url=None):
             cur_info.info = info
          if picture_url:
             cur_info.picture_url =picture_url
+         db.session.commit()
    except Exception as e:
+      if e != ValueError:
+            db.session.rollback() # 回滚
       print('[Error]', e, 'in change user info: No such user info')
       return
-   db.session.commit()
+   
 
    print('Successfully change id=%d user info!' % id)
