@@ -64,6 +64,40 @@ def open_post(message):
 def change_page(message):
     ret = []
     emit('post_info_response', {'result': 'Change Page Success', 'lst': ret})
+    
+#新增用户信息
+@socketio.on('Add User Info', namespace='/user_list')
+def new_user(message):
+    flag = add_user_info(message['id'], message['name'], message['email'], message['info'], message['picture_url'])
+    if flag:
+        emit('user_info_response', {'result':'Add User Info Success'})
+    else:
+        emit('user_info_response', {'result':'Add User Info Failure'})
+
+#查询用户信息
+@socketio.on('Search User Info', namespace='/user_list')
+def show_user_info(message):
+    res = search_user_info(id=message['id'])
+    res.append()
+    emit('user_info_response', {'result': 'Search Success'})
+
+#修改用户信息
+@socketio.on('Change User Info', namespace='/user_list')
+def change_user_info(message):
+    flag = change_user_info(id=message['id'],name=message["name"],email=message["email"],info=message["info"],picture_url=message["picture_url"])
+    if flag:
+        emit('user_info_response', {'result':'Change User Info Success'})
+    else:
+        emit('user_info_response', {'result':'Change User Info Failure'})
+
+#删除用户信息
+@socketio.on('Delete User Info', namespace='/user_list')
+def delete_user(message):
+    flag = delete_user_info(id=message["id"])
+    if flag:
+      emit('user_info_response', {'result': 'Delete User Info Success'})
+    else:
+      emit('user_info_response', {'result': 'Delete User Info Failure'})
 
 if __name__ == '__main__':
     with app.app_context():
