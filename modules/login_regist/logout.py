@@ -10,8 +10,8 @@ def user_logout():
     if request.method=="POST":
         try:
             data=json.loads(request.data)
-            logout=data['logout']
-            if logout=='True':
+            logout=data.get('logout')
+            if logout==True:
                 session.clear()
                 dict={}
                 dict['logout_message']='success: logout'
