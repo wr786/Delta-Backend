@@ -78,8 +78,10 @@ def new_user(message):
 @socketio.on('Search User Info', namespace='/user_list')
 def show_user_info(message):
     res = search_user_info(id=message['id'])
-    res.append()
-    emit('user_info_response', {'result': 'Search Success'})
+    if len(res)==1:    #精确ID查询应当只有一个对应用户信息              
+         emit('user_info_response',{'result': 'Search User Info Success', 'id': res.id, 'name': res.name, 'email': res.email, 'info': res.info, 'picture_url': res.picture_url})
+    else:
+         emit('user_info_response',{'result': 'Search User Info Failure', 'id': None, 'name': None, 'email': None, 'info': None, 'picture_url': None})
 
 #修改用户信息
 @socketio.on('Change User Info', namespace='/user_list')
