@@ -31,6 +31,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 def test():
     return "Hello World!"
 
+
 @socketio.on('Add Post Info', namespace='/post')
 def new_post(message):
     print("test")
@@ -41,33 +42,31 @@ def new_post(message):
         emit('post_info_response', {'result':'Post Failure'})
 
 
-
-@socketio.on('Search Post Info', namespace='/list') # list应该也有
+@socketio.on('Search Post Info', namespace='/list') 
 def show_post(message):
     limit = 15
-    res, total_page = search_post_info(tags=message['tags'], limit=limit, offset=(message['cur_page']-1)*15)
-    if total_page == 0:
-            emit('post_info_response', {'result': 'Search Failure', 'lst': [], 'cur_page': message['cur_page'], 'total_page': total_page})
+    res, total_post = search_post_info(tags=message['tags'], limit=limit, offset=(message['cur_page']-1)*15)
+    if total_post == 0:
+            emit('post_info_response', {'result': 'Search Failure', 'lst': [], 'cur_page': message['cur_page'], 'total_post': total_post})
     else:
-        total_page = total_page // limit + 1
         ret = []
         for per in res:
             ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
-        emit('post_info_response', {'result': 'Search Success', 'lst': ret, 'cur_page': message['cur_page'], 'total_page': total_page})
+        emit('post_info_response', {'result': 'Search Success', 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post})
 
 
-@socketio.on('Search for Another Page', namespace='/list')
-def change_page(message):
+@socketio.on('Search Post Info by Key Words', namespace='/key-list') 
+def search_by_key_words(message):
     limit = 15
-    res, total_page = search_post_info(tags=message['tags'], limit=limit, offset=(message['cur_page']-1)*15)
-    if total_page == 0:
-            emit('post_info_response', {'result': 'Change Page Failure', 'lst': [], 'cur_page': message['cur_page'], 'total_page': total_page})
+    key_words = message['key_words'].split() # 根据空白符分隔
+    res, total_post = search_post_info(key_words=key_words, limit=limit, offset=(message['cur_page']-1)*15)
+    if total_post == 0:
+        emit('key_words_search_response', {'result': 'Search Failure', 'lst': [], 'cur_page': message['cur_page'], 'total_post': total_post})
     else:
-        total_page = total_page // limit + 1
         ret = []
         for per in res:
             ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
-        emit('post_info_response', {'result': 'Change Page Success', 'lst': ret, 'cur_page': message['cur_page'], 'total_page': total_page})
+        emit('post_info_response', {'result': 'Search Success', 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post})
 
 
 @socketio.on('Open Post Info', namespace='/detail')
@@ -82,6 +81,7 @@ def open_post(message):
     else:
         res = res[0] # 肯定只有一个
         emit('post_info_response', {'result':'Open Post Success', 'id': res.id, 'headline': res.headline, 'tags': res.tags, 'price_and_number': res.price_and_number, 'info': res.info, 'picture': res.picture})
+
 
 if __name__ == '__main__':
     # with app.app_context():

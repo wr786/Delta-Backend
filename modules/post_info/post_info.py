@@ -39,7 +39,7 @@ def add_post_info(headline, tags, price_and_number, info, picture):
 
 # 查询数据
 # 返回两个值：一个是查询结果 一个是这个tag所有的post_info数量
-def search_post_info(id=None, tags=None, limit=15, offset=0):
+def search_post_info(id=None, tags=None,  key_words=None, limit=15, offset=0):
    if id != None: # id精确查询
       try:
          return PostInfo.query.filter_by(id=id).limit(limit).offset(offset).all(), PostInfo.query.filter_by(id=id).count()
@@ -52,6 +52,12 @@ def search_post_info(id=None, tags=None, limit=15, offset=0):
       except Exception as e:
          print('[Error]', e, 'in search info: Tags search')
          return [], 0
+   elif key_words:
+      try: # TODOLIST
+         return [], 0
+      except Exception as e:
+         print('[Error]', e, 'in search info: Key Words search')
+         return [], 0
    else:
       try:
          return PostInfo.query.limit(limit).offset(offset).all(), PostInfo.query.count()
@@ -60,7 +66,6 @@ def search_post_info(id=None, tags=None, limit=15, offset=0):
          return [], 0
    
    
-
 # 删除数据
 def delete_post_info(id):
    try:
