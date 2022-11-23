@@ -122,10 +122,7 @@ def delete_user(message):
     else:
       emit('user_info_response', {'result': 'Delete User Info Failure'})
 
-@socketio.on('Search for Next Page', namespace='/list')
-def change_page(message):
-    ret = []
-    emit('post_info_response', {'result': 'Change Page Success', 'lst': ret})
+
 
 if __name__ == '__main__':
     # with app.app_context():
