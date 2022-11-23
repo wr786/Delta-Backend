@@ -5,13 +5,14 @@ pymysql.install_as_MySQLdb()
 
 post_info = Blueprint('post_info', __name__, url_prefix='/post_info')
 
-db = SQLAlchemy()
+from ..utils import db
 
 class PostInfo(db.Model):
    # 表名
    __tablename__ = 'post_info'
    # 字段
-   id = db.Column('post_info_id', db.Integer, primary_key = True, autoincrement = True)
+   id = db.Column('post_info_id', db.Integer, primary_key=True, autoincrement=True)
+   user_id = db.Column('user_info_id', db.Integer)
    headline = db.Column(db.String(100))
    tags = db.Column(db.String(100), index=True)
    price_and_number = db.Column(db.Float)
@@ -19,9 +20,10 @@ class PostInfo(db.Model):
    picture = db.Column(db.String(5000)) 
 
 # 插入数据
-def add_post_info(headline, tags, price_and_number, info, picture):
+def add_post_info(user_id, headline, tags, price_and_number, info, picture):
    try:
       cur_info = PostInfo()
+      cur_info.user_id = user_id
       cur_info.headline = headline
       cur_info.tags = tags
       cur_info.price_and_number = price_and_number
@@ -29,12 +31,13 @@ def add_post_info(headline, tags, price_and_number, info, picture):
       cur_info.picture = picture
       db.session.add(cur_info)
       db.session.commit()
+      print('Successfully add id=%d post info!' % cur_info.id)
+      return True
+
    except Exception as e:
       db.session.rollback() # 回滚
       print('[Error]', e, 'in add info')
-      return 
-
-   print('Successfully add id=%d post info!' % cur_info.id)
+      return False
 
 
 # 查询数据
@@ -46,15 +49,19 @@ def search_post_info(id=None, tags=None,  key_words=None, limit=15, offset=0):
       except Exception as e:
          print('[Error]', e, 'in search info: Id search')
          return [], 0
-   elif tags != None:
+   elif tags != None: # tags查询
       try:
          return PostInfo.query.filter(PostInfo.tags.like(tags+'%')).limit(limit).offset(offset).all(), PostInfo.query.filter(PostInfo.tags.like(tags+'%')).count()
       except Exception as e:
          print('[Error]', e, 'in search info: Tags search')
          return [], 0
-   elif key_words:
-      try: # TODOLIST
-         return [], 0
+   elif key_words: # key words查询 是一个list
+      try: 
+         re_str = '%'
+         for word in key_words:
+            re_str = re_str + word + '%'
+         re_str += '%'
+         return PostInfo.query.filter(PostInfo.headline.like(re_str)).limit(limit).offset(offset).all(), PostInfo.query.filter(PostInfo.headline.like(re_str)).count()
       except Exception as e:
          print('[Error]', e, 'in search info: Key Words search')
          return [], 0
@@ -72,19 +79,23 @@ def delete_post_info(id):
       cur_info = PostInfo.query.filter_by(id=id).first()
    except Exception as e:
       print('[Error]', e, 'in delete info: Search info error')
+      return False
+
    try:
       if cur_info == None:
          raise ValueError
       else:
          db.session.delete(cur_info)
          db.session.commit()
+         print('Successfully delete id=%d post info!' % id)
+         return True
    except Exception as e:
       if e != ValueError:
          db.session.rollback() # 回滚
       print('[Error]', e, 'in delete info: No such post info')
-      return
+      return False
    
-   print('Successfully delete id=%d post info!' % id)
+
 
 # 修改数据
 def change_post_info(id, tags=None, price_and_number=None, info=None, picture=None):
@@ -92,7 +103,8 @@ def change_post_info(id, tags=None, price_and_number=None, info=None, picture=No
       cur_info = PostInfo.query.filter_by(id=id).first()
    except Exception as e:
       print('[Error]', e, 'in change info: Search info Error')
-      return
+      return False
+
    try:
       if cur_info == None:
          raise ValueError
@@ -106,13 +118,14 @@ def change_post_info(id, tags=None, price_and_number=None, info=None, picture=No
          if picture:
             cur_info.picture =picture
          db.session.commit()
+         print('Successfully change id=%d post info!' % id)
+         return True
    except Exception as e:
       if e != ValueError:
             db.session.rollback() # 回滚
       print('[Error]', e, 'in change info: No such post info')
-      return
+      return False
 
-   print('Successfully change id=%d post info!' % id)
 
 
 

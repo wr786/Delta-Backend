@@ -5,38 +5,36 @@ pymysql.install_as_MySQLdb()
 
 user_info = Blueprint('user_info', __name__, url_prefix='/user_info')
 
-from ..post_info import db
-# db = SQLAlchemy()
+from ..utils import db
+
 
 class UserInfo(db.Model):
    # 表名
    __tablename__ = 'user_info'
    # 字段
-   id = db.Column('user_info_id', db.Integer, primary_key = True)
+   id = db.Column('user_info_id', db.Integer, primary_key = True, autoincrement=True)
    name = db.Column(db.String(50))
    email = db.Column(db.String(50))
    info = db.Column(db.String(200))
    picture_url = db.Column(db.String(200))
 
-   def __init__(self, id, name, email,info, picture_url):
-      self.id = id
-      self.name = name
-      self.email = email
-      self.info = info
-      self.picture_url = picture_url
-
 
 # 插入数据
-def add_user_info( id, name, email,info, picture_url):
+def add_user_info(name, email, info=None, picture_url=None):
    try:
-      cur_info = UserInfo( id, name, email,info, picture_url)
+      cur_info = UserInfo()
+      cur_info.name = name
+      cur_info.email = email
+      cur_info.info = info
+      cur_info.picture_url = picture_url
       db.session.add(cur_info)
       db.session.commit()
+      print('Successfully add id=%d user info!' % cur_info.id)
+      return True
    except Exception as e:
       print('[Error]', e, 'in add user info')
-      return 
+      return False
 
-   print('Successfully add id=%d user info!' % id)
 
 
 # 查询数据
@@ -62,17 +60,20 @@ def delete_user_info(id):
       cur_info = UserInfo.query.filter_by(id=id).first()
    except Exception as e:
       print('[Error]', e, 'in delete user: Search user error')
+      return False
+
    try:
       if cur_info == None:
          raise ValueError
       else:
          db.session.delete(cur_info)
          db.session.commit()
+         print('Successfully delete id=%d user info!' % id)
+         return True
    except Exception as e:
       print('[Error]', e, 'in delete user: No such user info')
-      return
+      return False
 
-   print('Successfully delete id=%d user info!' % id)
 
 # 修改数据
 def change_user_info(id,  name=None, email=None, info=None, picture_url=None):
@@ -80,7 +81,8 @@ def change_user_info(id,  name=None, email=None, info=None, picture_url=None):
       cur_info = UserInfo.query.filter_by(id=id).first()
    except Exception as e:
       print('[Error]', e, 'in change user info: Search info Error')
-      return
+      return False
+
    try:
       if cur_info == None:
          raise ValueError
@@ -93,9 +95,10 @@ def change_user_info(id,  name=None, email=None, info=None, picture_url=None):
             cur_info.info = info
          if picture_url:
             cur_info.picture_url =picture_url
+         db.session.commit()
+         print('Successfully change id=%d user info!' % id)
+         return True
    except Exception as e:
       print('[Error]', e, 'in change user info: No such user info')
-      return
-   db.session.commit()
+      return False
 
-   print('Successfully change id=%d user info!' % id)

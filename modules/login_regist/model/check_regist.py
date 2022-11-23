@@ -1,6 +1,7 @@
 from ..connect import conn
 import re
 import hashlib
+from ...user_info_function import add_user_info
 
 cur = conn.cursor()
 
@@ -10,10 +11,17 @@ def add_user(username, email, password):
         encrypted=encrypt(password)
         sql = "INSERT INTO user(username, email, password) VALUES ('%s','%s','%s')" %(username, email, encrypted)
         cur.execute(sql)
-        conn.commit()  # 对数据库内容有改变，需要commit()
-        print('add_user success')
+        # 注册成功时自动生成对应用户
+        flag = add_user_info(username, email) # password 从注册表找暂时
+        if flag:
+            print('add_user success')
+            conn.commit()  # 对数据库内容有改变，需要commit()
+            print('register and add_user success')
+        else:
+            print('add_user error')
+            raise NotImplementedError
     except Exception as e:
-        print('[Error]', e, 'in add_user')
+        print('[Error]', e, 'in register and add_user')
         return
 
 def check_pku(email):
