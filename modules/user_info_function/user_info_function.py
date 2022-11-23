@@ -5,7 +5,8 @@ pymysql.install_as_MySQLdb()
 
 user_info = Blueprint('user_info', __name__, url_prefix='/user_info')
 
-db = SQLAlchemy()
+from ..post_info import db
+# db = SQLAlchemy()
 
 class UserInfo(db.Model):
    # 表名
