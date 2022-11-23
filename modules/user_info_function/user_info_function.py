@@ -16,17 +16,17 @@ class UserInfo(db.Model):
    name = db.Column(db.String(50))
    email = db.Column(db.String(50))
    info = db.Column(db.String(200))
-   picture_url = db.Column(db.String(200))
+   picture = db.Column(db.String(200))
 
 
 # 插入数据
-def add_user_info(name, email, info=None, picture_url=None):
+def add_user_info(name, email, info=None, picture=None):
    try:
       cur_info = UserInfo()
       cur_info.name = name
       cur_info.email = email
       cur_info.info = info
-      cur_info.picture_url = picture_url
+      cur_info.picture = picture
       db.session.add(cur_info)
       db.session.commit()
       print('Successfully add id=%d user info!' % cur_info.id)
@@ -38,7 +38,7 @@ def add_user_info(name, email, info=None, picture_url=None):
 
 
 # 查询数据
-def search_user_info(id=None,  name=None, email=None, info=None, picture_url=None):
+def search_user_info(id=None,  name=None, email=None, info=None, picture=None):
    if id != None: # id精确查询
       try:
          return UserInfo.query.filter_by(id=id).all()
@@ -80,7 +80,7 @@ def delete_user_info(id):
 
 
 # 修改数据
-def change_user_info(id,  name=None, email=None, info=None, picture_url=None):
+def change_user_info(id,  name=None, email=None, info=None, picture=None):
    try:
       cur_info = UserInfo.query.filter_by(id=id).first()
    except Exception as e:
@@ -97,8 +97,8 @@ def change_user_info(id,  name=None, email=None, info=None, picture_url=None):
             cur_info.email = email
          if info:
             cur_info.info = info
-         if picture_url:
-            cur_info.picture_url =picture_url
+         if picture:
+            cur_info.picture =picture
          db.session.commit()
          print('Successfully change id=%d user info!' % id)
          return True

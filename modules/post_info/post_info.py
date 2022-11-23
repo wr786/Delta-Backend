@@ -98,7 +98,7 @@ def delete_post_info(id):
 
 
 # 修改数据
-def change_post_info(id, tags=None, price_and_number=None, info=None, picture=None):
+def change_post_info(id, headline=None, tags=None, price_and_number=None, info=None, picture=None): # cannot change user_id
    try:
       cur_info = PostInfo.query.filter_by(id=id).first()
    except Exception as e:
@@ -109,6 +109,8 @@ def change_post_info(id, tags=None, price_and_number=None, info=None, picture=No
       if cur_info == None:
          raise ValueError
       else:
+         if headline:
+            cur_info.headline = headline
          if tags: # 标准的Str
             cur_info.tags = tags
          if price_and_number:
