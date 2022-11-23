@@ -43,12 +43,14 @@ def search_user_info(id=None,  name=None, email=None, info=None, picture_url=Non
       try:
          return UserInfo.query.filter_by(id=id).all()
       except Exception as e:
+         db.session.rollback() # 回滚
          print('[Error]', e, 'in search user: Id search')
          return []
    else:
       try:
          return UserInfo.query.all()
       except Exception as e:
+         db.session.rollback() # 回滚
          print('[Error]', e, 'in search user: No-limit search')
          return []
 
@@ -61,7 +63,7 @@ def delete_user_info(id):
    except Exception as e:
       print('[Error]', e, 'in delete user: Search user error')
       return False
-
+      
    try:
       if cur_info == None:
          raise ValueError
@@ -71,6 +73,8 @@ def delete_user_info(id):
          print('Successfully delete id=%d user info!' % id)
          return True
    except Exception as e:
+      if e != ValueError:
+         db.session.rollback() # 回滚
       print('[Error]', e, 'in delete user: No such user info')
       return False
 
@@ -80,7 +84,7 @@ def change_user_info(id,  name=None, email=None, info=None, picture_url=None):
    try:
       cur_info = UserInfo.query.filter_by(id=id).first()
    except Exception as e:
-      print('[Error]', e, 'in change user info: Search info Error')
+      print('[Error]', e, 'in change user info: Search user info Error')
       return False
 
    try:
@@ -99,6 +103,9 @@ def change_user_info(id,  name=None, email=None, info=None, picture_url=None):
          print('Successfully change id=%d user info!' % id)
          return True
    except Exception as e:
+      if e != ValueError:
+            db.session.rollback() # 回滚
       print('[Error]', e, 'in change user info: No such user info')
       return False
+   
 

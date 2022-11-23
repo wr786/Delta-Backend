@@ -98,8 +98,48 @@ def change_user(message):
 
 ################ User Info WebSocket End ################
 
+
+#新增用户信息
+@socketio.on('Add User Info', namespace='/user_list')
+def new_user(message):
+    flag = add_user_info(message['id'], message['name'], message['email'], message['info'], message['picture_url'])
+    if flag:
+        emit('user_info_response', {'result':'Add User Info Success'})
+    else:
+        emit('user_info_response', {'result':'Add User Info Failure'})
+
+#查询用户信息
+@socketio.on('Search User Info', namespace='/user_list')
+def show_user_info(message):
+    res = search_user_info(id=message['id'])
+    if len(res)==1:    #精确ID查询应当只有一个对应用户信息
+         res = res[0]
+         emit('user_info_response',{'result': 'Search User Info Success', 'id': res.id, 'name': res.name, 'email': res.email, 'info': res.info, 'picture_url': res.picture_url})
+    else:
+         emit('user_info_response',{'result': 'Search User Info Failure', 'id': None, 'name': None, 'email': None, 'info': None, 'picture_url': None})
+
+#修改用户信息
+@socketio.on('Change User Info', namespace='/user_list')
+def change_user_info(message):
+    flag = change_user_info(id=message['id'],name=message["name"],email=message["email"],info=message["info"],picture_url=message["picture_url"])
+    if flag:
+        emit('user_info_response', {'result':'Change User Info Success'})
+    else:
+        emit('user_info_response', {'result':'Change User Info Failure'})
+
+#删除用户信息
+@socketio.on('Delete User Info', namespace='/user_list')
+def delete_user(message):
+    flag = delete_user_info(id=message["id"])
+    if flag:
+      emit('user_info_response', {'result': 'Delete User Info Success'})
+    else:
+      emit('user_info_response', {'result': 'Delete User Info Failure'})
+
+
+
 if __name__ == '__main__':
-    with app.app_context():
-        db.drop_all()
-        db.create_all()
+    # with app.app_context():
+    #     db.drop_all()
+    #     db.create_all()
     socketio.run(app, port=5001, debug=True)
