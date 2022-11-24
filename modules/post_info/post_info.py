@@ -13,7 +13,7 @@ class PostInfo(db.Model):
    # 字段
    id = db.Column('post_info_id', db.Integer, primary_key = True, autoincrement = True)
    headline = db.Column(db.String(100))
-   tags = db.Column(db.String(100))
+   tags = db.Column(db.String(100), index=True)
    price_and_number = db.Column(db.Float)
    info = db.Column(db.String(200))
    picture = db.Column(db.String(5000)) 
