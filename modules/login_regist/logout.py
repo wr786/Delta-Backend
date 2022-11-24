@@ -15,12 +15,12 @@ def user_logout():
                 session.clear()
                 dict={}
                 dict['logout_message']='success: logout'
-                dict['logout_code']='1'
+                dict['logout_code']=1
                 return dict
             else:
                 dict={}
                 dict['logout_message']='fail: logout'
-                dict['logout_code']='0'
+                dict['logout_code']=0
                 return dict
         except Exception as e:
             print('[Error]', e, 'in logout')

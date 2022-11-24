@@ -19,24 +19,24 @@ def user_regist():
             print(username,email,password,captcha,captcha_skip)
             dict={}
             if regist_null(username,email,password):
-                dict['regist_code']='-1'
+                dict['regist_code']=-1
                 dict['regist_message']='fail:need username, email and password'
                 return dict
             elif not check_pku(email):
-                dict['regist_code']='2'
+                dict['regist_code']=2
                 dict['regist_message']='fail:email adress must be @stu.pku.edu.cn'
                 return dict              #2=不是PKU邮箱
             elif exist_user(email):
-                dict['regist_code']='1'
+                dict['regist_code']=1
                 dict['regist_message']='fail:email has been registered'
                 return dict                        #1=用户已存在
             elif not check_captcha(email,captcha) and not captcha_skip:   #测试需要跳过captcha验证用，部署时请删除 and 后半句
-                dict['regist_code']='3'
+                dict['regist_code']=3
                 dict['regist_message']='fail:captcha wrong or expired'
                 return dict
             else:
                 add_user(data['username'],data['email'], data['password'] )
-                dict['regist_code']='0'
+                dict['regist_code']=0
                 dict['regist_message']='success:welcome to delta'
                 info=getinfo(email)
                 session['username']=info[0]

@@ -21,17 +21,17 @@ def sendemail():
             email=data.get('email')
             dict={}
             if exist_user(email):
-                dict['sendemail_code']='1'
+                dict['sendemail_code']=1
                 dict['sendemail_message']='fail:email has been registered'
                 return dict                        #1=用户已存在
             elif not check_pku(email):
-                dict['sendemail_code']='2'
+                dict['sendemail_code']=2
                 dict['sendemail_massage']='fail:email adress must be @stu.pku.edu.cn or @pku.edu.cn'
                 return dict              #2=不是PKU邮箱
             msg=Message("pku_delta验证码",recipients=[email])
             msg.body="验证码是：%s" % captcha
             mail.send(msg)
-            dict['sendemail_code']='0'
+            dict['sendemail_code']=0
             dict['sendemail_message']='success: send an email'
             print("send captcha=%s to %s" % (captcha,email))
             cache.set(email,captcha,timeout=1000)  #captcha expired in 1000s
