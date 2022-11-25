@@ -43,6 +43,7 @@ def user_regist():
                 session['email']=info[1]
                 session['userid']=info[3]
                 session.permanent=True
+                dict['userid']=info[3]
                 return dict                       #0=注册成功   id为auto_increment
         except Exception as e:
             print('[Error]', e, 'in regist')

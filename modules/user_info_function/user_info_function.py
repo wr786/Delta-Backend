@@ -13,14 +13,15 @@ class UserInfo(db.Model):
    __tablename__ = 'user_info'
    # 字段
    id = db.Column('user_info_id', db.Integer, primary_key = True, autoincrement=True)
-   name = db.Column(db.String(50))
-   email = db.Column(db.String(50))
-   info = db.Column(db.String(200))
-   picture = db.Column(db.String(200))
+   name = db.Column(db.String(100))
+   email = db.Column(db.String(100))
+   info = db.Column(db.String(500))
+   picture = db.Column(db.String(5000))
 
 
 # 插入数据
-def add_user_info(name, email, info=None, picture=None):
+def add_user_info(name, email, info='testInfo', picture='testPicture'):
+   print('add_user_info: ', name, email)
    try:
       cur_info = UserInfo()
       cur_info.name = name
@@ -41,11 +42,11 @@ def add_user_info(name, email, info=None, picture=None):
 def search_user_info(id=None,  name=None, email=None, info=None, picture=None):
    if id != None: # id精确查询
       try:
-         return UserInfo.query.filter_by(id=id).all()
+         return UserInfo.query.filter_by(id=id).one()
       except Exception as e:
          db.session.rollback() # 回滚
          print('[Error]', e, 'in search user: Id search')
-         return []
+         return None
    else:
       try:
          return UserInfo.query.all()

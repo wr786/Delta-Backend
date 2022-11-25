@@ -14,7 +14,7 @@ def is_existed(email,password):
 	try:
 		conn.ping(reconnect=True)
 		encrypted=encrypt(password)
-		sql="SELECT * FROM user WHERE email ='%s' and password ='%s'" %(email,encrypted)
+		sql="SELECT username, password, email, id FROM account WHERE email ='%s' and password ='%s'" %(email,encrypted)
 		cur.execute(sql)
 		result = cur.fetchall()
 		if (len(result) == 0):
@@ -28,7 +28,7 @@ def is_existed(email,password):
 def exist_user(email):
 	try:
 		conn.ping(reconnect=True)
-		sql = "SELECT * FROM user WHERE email ='%s'" % (email)
+		sql = "SELECT username, password, email, id FROM account WHERE email ='%s'" % (email)
 		cur.execute(sql)
 		result = cur.fetchall()
 		if (len(result) == 0):
@@ -42,7 +42,7 @@ def exist_user(email):
 def getinfo(email):
 	try:
 		conn.ping(reconnect=True)
-		sql="SELECT * FROM user WHERE email ='%s'" % (email)
+		sql="SELECT username, password, email, id FROM account WHERE email ='%s'" % (email)
 		cur.execute(sql)
 		result=cur.fetchone() #tuple=(username，email，password，id)
 		return result
