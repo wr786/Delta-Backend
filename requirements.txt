@@ -1,2 +1,9 @@
 flask
 flask_socketio
+flask_mail
+flask_cache
+Werkzeug==0.16.1
+markupsafe==2.0.1
+Flask-Ext
+cachelib
+redis
