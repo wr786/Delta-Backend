@@ -1,5 +1,8 @@
 flask
 flask_socketio
+flask-sqlalchemy
+pymysql
+cryptography
 flask_mail
 flask_cache
 Werkzeug==0.16.1

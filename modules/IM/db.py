@@ -1,7 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 import datetime
 
-db = SQLAlchemy()
+from ..utils import db
 
 # 会话表
 class ConvInfo(db.Model):
