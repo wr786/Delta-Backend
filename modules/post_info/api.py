@@ -117,10 +117,10 @@ def _get_comment():
         for comment in comments:
             user = search_user_info(comment.sender)
             ret.append({
-                'username': user.username,
+                'username': user.name,
                 # 'userAvatar':  user.pictureUrl, # 等有头像功能再说
                 'content': comment.content,
-                'time': comment.createTime
+                'time': comment.createTime.strftime( '%Y-%m-%d %H:%M:%S' )  
             })
         return {"code": code, "comments": ret}
     elif via == 'user':
@@ -129,10 +129,10 @@ def _get_comment():
         for comment in comments:
             user = search_user_info(comment.sender)
             ret.append({
-                'username': user.username,
+                'username': user.name,
                 # 'userAvatar':  user.pictureUrl, # 等有头像功能再说
                 'content': comment.content,
-                'time': comment.createTime
+                'time': comment.createTime.strftime( '%Y-%m-%d %H:%M:%S' ) 
             })
         return {"code": code, "comments": ret}
     else:
