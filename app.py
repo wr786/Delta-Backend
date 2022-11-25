@@ -4,7 +4,8 @@ from mailbox import mboxMessage
 from socket import socket
 from sre_parse import ESCAPES
 # from tkinter.font import names
-from flask import Flask, session
+from flask import Flask,session
+from datetime import timedelta
 from flask_socketio import SocketIO, emit
 
 from modules.utils import config, db
@@ -14,9 +15,11 @@ from modules.login_regist import AccountInfo
 from modules.login_regist import login_blue, regist_blue, getsesinfo_blue, logout_blue
 from modules.user_info_function import user_info
 from modules.user_info_function import add_user_info, search_user_info, delete_user_info, change_user_info
+from modules.login_regist import sendemail_blue
+from modules.login_regist import mail,cache
 
 app = Flask(__name__)
-app.secret_key=config.SECRET_KEY
+app.permanent_session_lifetime = timedelta(hours=1)  #session expired in 1 h
 # register blueprint
 app.register_blueprint(post_info)
 app.register_blueprint(user_info)
@@ -24,9 +27,13 @@ app.register_blueprint(login_blue)
 app.register_blueprint(regist_blue)
 app.register_blueprint(getsesinfo_blue)
 app.register_blueprint(logout_blue)
+app.register_blueprint(sendemail_blue)
 # load config file
 app.config.from_object(config)
 db.init_app(app)
+mail.init_app(app)
+cache.init_app(app)
+
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 @app.route('/')

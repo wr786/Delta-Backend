@@ -1,3 +1,13 @@
 flask
 flask_socketio
+<<<<<<< HEAD
 cryptography
+=======
+flask_mail
+flask_cache
+Werkzeug==0.16.1
+markupsafe==2.0.1
+Flask-Ext
+cachelib
+redis
+>>>>>>> main
