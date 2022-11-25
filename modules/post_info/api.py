@@ -65,13 +65,7 @@ def open_post():
 
 @post_blue.route('/change',methods=['POST'])
 def change_post():
-    message = {}
-    message['id'] = request.args.get('id')
-    message['new_headline'] = request.args.get('new_headline')
-    message['new_tags'] = request.args.get('new_tags')
-    message['new_price_and_number'] = request.args.get('new_price_and_number')
-    message['new_info'] = request.args.get('new_info')
-    message['new_picture'] = request.args.get('new_picture')
+    message = json.loads(request.data)
     flag = change_post_info(
         id=message['id'], 
         headline=message['new_headline'], 
@@ -89,8 +83,8 @@ def change_post():
 #删除Post Info
 @post_blue.route('/delete',methods=['POST'])
 def delete_post():
-    pid = request.args.get('id')
-    flag = delete_post_info(id=pid)
+    message = json.loads(request.data)
+    flag = delete_post_info(id=message['id'])
     if flag:
       return {'result': 'Delete Post Info Success'}
     else:
