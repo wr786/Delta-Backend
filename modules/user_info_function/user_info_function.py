@@ -42,11 +42,11 @@ def add_user_info(name, email, info='testInfo', picture='testPicture'):
 def search_user_info(id=None,  name=None, email=None, info=None, picture=None):
    if id != None: # id精确查询
       try:
-         return UserInfo.query.filter_by(id=id).all()
+         return UserInfo.query.filter_by(id=id).one()
       except Exception as e:
          db.session.rollback() # 回滚
          print('[Error]', e, 'in search user: Id search')
-         return []
+         return None
    else:
       try:
          return UserInfo.query.all()

@@ -1,5 +1,7 @@
 from flask import Blueprint,request,render_template,redirect,session
 from .post_info import *
+from .comment import *
+from ..user_info_function import search_user_info
 import json
 
 post_blue=Blueprint('post',__name__,url_prefix='/post')
@@ -7,8 +9,14 @@ post_blue=Blueprint('post',__name__,url_prefix='/post')
 @post_blue.route('/add',methods=['POST'])
 def new_post():
     message = json.loads(request.data)
-    print('new_post:', message)
-    flag = add_post_info(0, message['headline'], message['tags'], float(message['price_and_number']), message['info'], message['picture'])
+    flag = add_post_info(
+        0, 
+        message['headline'], 
+        message['tags'], 
+        float(message['price_and_number']) if message['price_and_number'] != '' else 0, 
+        message['info'], 
+        message['picture']
+    )
     if flag:
         return {'result':'Post Success'}
     else:
@@ -108,3 +116,39 @@ def search_user_post():
         for per in res:
             ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
         return {'code': 0, 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post}
+        
+@post_blue.route('/comment/add',methods=['POST'])
+def _add_comment():
+    data = json.loads(request.data)
+    code = add_comment(int(data['pid']), int(data['uid']), data['content'])
+    return {'code': code}
+
+@post_blue.route('/comment/get', methods=['GET'])
+def _get_comment():
+    via = request.args.get('via')
+    if via == 'post':
+        code, comments = get_comments_by_post(int(request.args.get('pid')))
+        ret = []
+        for comment in comments:
+            user = search_user_info(comment.sender)
+            ret.append({
+                'username': user.name,
+                # 'userAvatar':  user.pictureUrl, # 等有头像功能再说
+                'content': comment.content,
+                'time': comment.createTime.strftime( '%Y-%m-%d %H:%M:%S' )  
+            })
+        return {"code": code, "comments": ret}
+    elif via == 'user':
+        code, comments = get_comments_by_user(int(request.args.get('uid')))
+        ret = []
+        for comment in comments:
+            user = search_user_info(comment.sender)
+            ret.append({
+                'username': user.name,
+                # 'userAvatar':  user.pictureUrl, # 等有头像功能再说
+                'content': comment.content,
+                'time': comment.createTime.strftime( '%Y-%m-%d %H:%M:%S' ) 
+            })
+        return {"code": code, "comments": ret}
+    else:
+        return {"code": -1, "message": "Invalid via param!"}

@@ -1,23 +1,9 @@
 from flask import request, flash, url_for, redirect, render_template, Blueprint
-from flask_sqlalchemy import SQLAlchemy
 import pymysql
 pymysql.install_as_MySQLdb()
+from .db import *
 
 post_info = Blueprint('post_info', __name__, url_prefix='/post_info')
-
-from ..utils import db
-
-class PostInfo(db.Model):
-   # 表名
-   __tablename__ = 'post_info'
-   # 字段
-   id = db.Column('post_info_id', db.Integer, primary_key=True, autoincrement=True)
-   user_id = db.Column('user_info_id', db.Integer)
-   headline = db.Column(db.String(100))
-   tags = db.Column(db.String(100), index=True)
-   price_and_number = db.Column(db.Float)
-   info = db.Column(db.String(200))
-   picture = db.Column(db.String(5000)) 
 
 # 插入数据
 def add_post_info(user_id, headline, tags, price_and_number, info, picture):
