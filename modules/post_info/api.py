@@ -18,7 +18,7 @@ def new_post():
 def show_post():
     message = {}
     message['tags'] = request.args.get('tags')
-    message['cur_page'] = request.args.get('cur_page')
+    message['cur_page'] = int(request.args.get('cur_page'))
     limit = 15
     res, total_post = search_post_info(tags=message['tags'], limit=limit, offset=(message['cur_page']-1)*15)
     if total_post == 0:
