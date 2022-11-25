@@ -42,7 +42,7 @@ def add_post_info(user_id, headline, tags, price_and_number, info, picture):
 
 # 查询数据
 # 返回两个值：一个是查询结果 一个是这个tag所有的post_info数量
-def search_post_info(id=None, tags=None,  key_words=None, limit=15, offset=0):
+def search_post_info(id=None, tags=None,  key_words=None, user_id=None, limit=15, offset=0):
    if id != None: # id精确查询
       try:
          return PostInfo.query.filter_by(id=id).limit(limit).offset(offset).all(), PostInfo.query.filter_by(id=id).count()

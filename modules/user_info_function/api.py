@@ -52,3 +52,4 @@ def delete_user():
         return {'result': 'Delete User Info Success'}
     else:
         return {'result': 'Delete User Info Failure'}
+

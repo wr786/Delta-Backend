@@ -92,3 +92,19 @@ def delete_post():
       return {'result': 'Delete Post Info Success'}
     else:
       return {'result': 'Delete Post Info Failure'}
+
+
+
+#查询用户的所有发布信息
+@post_blue.rout('/user_post',methods=['POST'])
+def search_user_post():
+    message = json.loads(request.data)
+    limit = 15
+    res, total_post = search_post_info(user_id=message['user_id'], limit=limit, offset=(message['cur_page']-1)*15)
+    if total_post == 0:
+        return {'code': -1, 'lst': [], 'cur_page': message['cur_page'], 'total_post': total_post}
+    else:
+        ret = []
+        for per in res:
+            ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
+        return {'code': 0, 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post}
