@@ -10,17 +10,17 @@ def user_logout():
     if request.method=="POST":
         try:
             data=json.loads(request.data)
-            logout=data['logout']
-            if logout=='True':
+            logout=data.get('logout')
+            if logout==True:
                 session.clear()
                 dict={}
                 dict['logout_message']='success: logout'
-                dict['logout_code']='1'
+                dict['logout_code']=1
                 return dict
             else:
                 dict={}
                 dict['logout_message']='fail: logout'
-                dict['logout_code']='0'
+                dict['logout_code']=0
                 return dict
         except Exception as e:
             print('[Error]', e, 'in logout')

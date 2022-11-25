@@ -18,8 +18,9 @@ def add_user(username, email, password):
 
 def check_pku(email):
     try:
-        pattern= r'^[0-9a-zA-Z_-]+@stu.pku.edu.cn$'
-        if re.match(pattern,email):
+        pattern1= r'^[0-9a-zA-Z_-]+@stu.pku.edu.cn$'
+        pattern2= r'^[0-9a-zA-Z_-]+@pku.edu.cn$'
+        if re.match(pattern1,email) or re.match(pattern2,email):
             return True
         else:
             return False

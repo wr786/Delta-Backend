@@ -10,29 +10,30 @@ def user_login():
     if request.method=='POST':  # 注册发送的请求为POST请求
         try:
             data=json.loads(request.data)
-            email = data['email']
-            password = data['password']
+            email = data.get('email')
+            password = data.get('password')
             dict={}
             if login_null(email,password):
-                dict['login_code']='-1'
+                dict['login_code']=-1
                 dict['login_message']='fail:need email and password'
                 return dict           #-1=需要邮箱和密码
             elif is_existed(email, password):
-                info=getinfo(email)     #获得账户信息 info[0]=username  info[1]=id ,暂时用id代替token？
-                dict['login_code']='0'
+                info=getinfo(email)     #获得账户信息 
+                dict['login_code']=0
                 dict['login_message']='success: welcome back'
                 dict['username']=info[0]
                 dict['userid']=info[3]
                 session['username']=info[0]
                 session['email']=info[1]
                 session['userid']=info[3]
+                session.permanent=True
                 return dict           #0=登录成功
             elif exist_user(email):
-                dict['login_code']='2'
+                dict['login_code']=2
                 dict['login_message']='fail:wrong password'
                 return dict             #2=密码错误
             else:
-                dict['login_code']='1'
+                dict['login_code']=1
                 dict['login_message']='fail:no such account'
                 return dict             #1=不存在该用户
         except Exception as e:
