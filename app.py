@@ -38,7 +38,7 @@ def test():
 @socketio.on('Add Post Info', namespace='/post')
 def new_post(message):
     print("test")
-    flag = add_post_info(None, message['headline'], message['tags'], float(message['price_and_number']), message['info'], message['picture'])
+    flag = add_post_info(0, message['headline'], message['tags'], float(message['price_and_number']), message['info'], message['picture'])
     if flag:
         emit('post_info_response', {'result':'Post Success'})
     else:
