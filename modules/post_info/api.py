@@ -7,6 +7,7 @@ post_blue=Blueprint('post',__name__,url_prefix='/post')
 @post_blue.route('/add',methods=['POST'])
 def new_post():
     message = json.loads(request.data)
+    print('new_post:', message)
     flag = add_post_info(0, message['headline'], message['tags'], float(message['price_and_number']), message['info'], message['picture'])
     if flag:
         return {'result':'Post Success'}
@@ -36,6 +37,8 @@ def search_by_key_words():
     message = {}
     message['key_words'] = request.args.get('key_words')
     message['cur_page'] = request.args.get('cur_page')
+    # FOR DEBUG：message['cur_page'] = 1
+    print('search_by_key_words: ', message)
     limit = 15
     key_words = message['key_words'].split() # 根据空白符分隔
     res, total_post = search_post_info(key_words=key_words, limit=limit, offset=(message['cur_page']-1)*15)

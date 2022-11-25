@@ -9,16 +9,16 @@ def add_user(username, email, password):
     try:
         conn.ping(reconnect=True)
         encrypted=encrypt(password)
-        sql = "INSERT INTO user(username, email, password) VALUES ('%s','%s','%s')" %(username, email, encrypted)
-        cur.execute(sql)
+        sql = "INSERT INTO account(username, email, password) VALUES ('%s','%s','%s')" %(username, email, encrypted)
         # 注册成功时自动生成对应用户
         flag = add_user_info(username, email) # password 从注册表找暂时
         if flag:
             print('add_user success')
+            cur.execute(sql)
             conn.commit()  # 对数据库内容有改变，需要commit()
             print('register and add_user success')
         else:
-            print('add_user error')
+            print('[Error] in add_user')
             raise NotImplementedError
     except Exception as e:
         print('[Error]', e, 'in register and add_user')
