@@ -51,6 +51,12 @@ def search_post_info(id=None, tags=None,  key_words=None, user_id=None, limit=15
       except Exception as e:
          print('[Error]', e, 'in search info: Key Words search')
          return [], 0
+   elif user_id: # 查询用户发布的post
+      try: 
+         return PostInfo.query.filter_by(user_id=user_id).limit(limit).offset(offset).all(), PostInfo.query.filter_by(user_id=user_id).count()
+      except Exception as e:
+         print('[Error]', e, 'in search info: User_id search')
+         return [], 0
    else:
       try:
          return PostInfo.query.limit(limit).offset(offset).all(), PostInfo.query.count()

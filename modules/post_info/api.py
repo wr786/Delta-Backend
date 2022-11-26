@@ -6,11 +6,12 @@ import json
 
 post_blue=Blueprint('post',__name__,url_prefix='/post')
 
+#新增post
 @post_blue.route('/add',methods=['POST'])
 def new_post():
     message = json.loads(request.data)
     flag = add_post_info(
-        0, 
+        int(message['user_id']), 
         message['headline'], 
         message['tags'], 
         float(message['price_and_number']) if message['price_and_number'] != '' else 0, 
@@ -18,25 +19,30 @@ def new_post():
         message['picture']
     )
     if flag:
-        return {'result':'Post Success'}
+        return {'code': 0}
     else:
-        return {'result':'Post Failure'}
+        return {'code': -1}
 
 
+#根据tags搜索post
 @post_blue.route('/list',methods=['GET'])
 def show_post():
     message = {}
     message['tags'] = request.args.get('tags')
     message['cur_page'] = int(request.args.get('cur_page'))
     limit = 15
-    res, total_post = search_post_info(tags=message['tags'], limit=limit, offset=(message['cur_page']-1)*15)
+    res, total_post = search_post_info(
+        tags=message['tags'], 
+        limit=limit, 
+        offset=(message['cur_page']-1)*15
+    )
     if total_post == 0:
-        return {'result': 'Search Failure', 'lst': [], 'cur_page': message['cur_page'], 'total_post': total_post}
+        return {'code': -1, 'lst': [], 'cur_page': message['cur_page'], 'total_post': total_post}
     else:
         ret = []
         for per in res:
             ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
-        return {'result': 'Search Success', 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post}
+        return {'code': 0, 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post}
 
 
 #搜索Post Info（by key words）
@@ -49,31 +55,37 @@ def search_by_key_words():
     print('search_by_key_words: ', message)
     limit = 15
     key_words = message['key_words'].split() # 根据空白符分隔
-    res, total_post = search_post_info(key_words=key_words, limit=limit, offset=(message['cur_page']-1)*15)
+    res, total_post = search_post_info(
+        key_words=key_words,
+        limit=limit, 
+        offset=(message['cur_page']-1)*15
+    )
     if total_post == 0:
-        return {'result': 'Search Failure', 'lst': [], 'cur_page': message['cur_page'], 'total_post': total_post}
+        return {'code': -1, 'lst': [], 'cur_page': message['cur_page'], 'total_post': total_post}
     else:
         ret = []
         for per in res:
             ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
-        return {'result': 'Search Success', 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post}
+        return {'code': 0, 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post}
 
 
+#打开一个post
 @post_blue.route('/detail',methods=['GET'])
 def open_post():
     pid = request.args.get('id')
     res, _ = search_post_info(id=pid)
     if res == []:
         print(f'No such id!: {pid}')
-        return {'result':'Open Post Failure', 'id':None, 'headline':None, 'tags':None, 'price_and_number': None, 'info':None, 'picture':None}
+        return {'code': -1, 'id':None, 'headline':None, 'tags':None, 'price_and_number': None, 'info':None, 'picture':None}
     elif len(res) > 1:
         print(f'Same id for post info!: {pid}')
-        return {'result':'Open Post Failure', 'id':None, 'headline':None, 'tags':None, 'price_and_number': None, 'info':None, 'picture':None}
+        return {'code': -1, 'id':None, 'headline':None, 'tags':None, 'price_and_number': None, 'info':None, 'picture':None}
     else:
         res = res[0] # 肯定只有一个
-        return {'result':'Open Post Success', 'id': res.id, 'headline': res.headline, 'tags': res.tags, 'price_and_number': res.price_and_number, 'info': res.info, 'picture': res.picture}
+        return {'code': 0, 'id': res.id, 'headline': res.headline, 'tags': res.tags, 'price_and_number': res.price_and_number, 'info': res.info, 'picture': res.picture}
 
 
+#修改post
 @post_blue.route('/change',methods=['POST'])
 def change_post():
     message = json.loads(request.data)
@@ -86,9 +98,9 @@ def change_post():
         picture=message["new_picture"]
     )
     if flag:
-        return {'result':'Change Post Info Success'}
+        return {'code': 0}
     else:
-        return {'result':'Change Post Info Failure'}
+        return {'code': -1}
 
 
 #删除Post Info
@@ -97,10 +109,9 @@ def delete_post():
     message = json.loads(request.data)
     flag = delete_post_info(id=message['id'])
     if flag:
-      return {'result': 'Delete Post Info Success'}
+      return {'code': 0}
     else:
-      return {'result': 'Delete Post Info Failure'}
-
+      return {'code': -1}
 
 
 #查询用户的所有发布信息
@@ -108,7 +119,11 @@ def delete_post():
 def search_user_post():
     message = json.loads(request.data)
     limit = 15
-    res, total_post = search_post_info(user_id=message['user_id'], limit=limit, offset=(message['cur_page']-1)*15)
+    res, total_post = search_post_info(
+        user_id=message['user_id'], 
+        limit=limit, 
+        offset=(message['cur_page']-1)*15
+    )
     if total_post == 0:
         return {'code': -1, 'lst': [], 'cur_page': message['cur_page'], 'total_post': total_post}
     else:
@@ -117,11 +132,13 @@ def search_user_post():
             ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
         return {'code': 0, 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post}
         
+
 @post_blue.route('/comment/add',methods=['POST'])
 def _add_comment():
     data = json.loads(request.data)
     code = add_comment(int(data['pid']), int(data['uid']), data['content'])
     return {'code': code}
+
 
 @post_blue.route('/comment/get', methods=['GET'])
 def _get_comment():
