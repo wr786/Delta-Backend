@@ -115,7 +115,7 @@ def delete_post():
 
 
 #查询用户的所有发布信息
-@post_blue.rout('/user_post',methods=['POST'])
+@post_blue.route('/user_post',methods=['POST'])
 def search_user_post():
     message = json.loads(request.data)
     limit = 15

@@ -16,7 +16,7 @@ class PostInfo(db.Model):
    # createTime = db.Column(db.DateTime, default=datetime.now)
 
    def __init__(self, **kwargs):
-        super(Comment, self).__init__(**kwargs)
+        super(PostInfo, self).__init__(**kwargs)
 
 class Comment(db.Model):
     __tablename__ = 'comment'
