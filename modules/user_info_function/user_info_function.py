@@ -1,29 +1,17 @@
 from flask import request, flash, url_for, redirect, render_template, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
+from .db import *
 pymysql.install_as_MySQLdb()
 
 user_info = Blueprint('user_info', __name__, url_prefix='/user_info')
 
-from ..utils import db
-
-
-class UserInfo(db.Model):
-   # 表名
-   __tablename__ = 'user_info'
-   # 字段
-   id = db.Column('user_info_id', db.Integer, primary_key = True, autoincrement=True)
-   name = db.Column(db.String(100))
-   email = db.Column(db.String(100))
-   info = db.Column(db.String(500))
-   picture = db.Column(db.String(5000))
-
 
 # 插入数据
-def add_user_info(name, email, info='testInfo', picture='testPicture'):
-   print('add_user_info: ', name, email)
+def add_user_info(id, name, email, info='testInfo', picture='testPicture'):
    try:
       cur_info = UserInfo()
+      cur_info.id=id
       cur_info.name = name
       cur_info.email = email
       cur_info.info = info
@@ -109,4 +97,65 @@ def change_user_info(id,  name=None, email=None, info=None, picture=None):
       print('[Error]', e, 'in change user info: No such user info')
       return False
    
+
+# Follow某人
+def star_user(fan_id, star_id):
+   try:
+      if StarsAndFans.query.filter_by(fan_id=fan_id, star_id=star_id).first(): # 已经存在follow了
+         print('Already followed')
+         raise ValueError
+      else:
+         cur_follow = StarsAndFans()
+         cur_follow.fan_id = fan_id
+         cur_follow.star_id = star_id
+         print('Successfully add id=%d follow info!' % cur_follow.id)
+         return True
+   except Exception as e:
+      print('[Error]', e, 'in add star user')
+      return False
+
+
+# 不再Follow某人
+def not_star_user(fan_id, star_id):
+   try:
+      cur_follow = StarsAndFans.query.filter_by(fan_id=fan_id, star_id=star_id).first()
+   except Exception as e:
+      print('[Error]', e, ' in search follow')
+      return False
+      
+   try:
+      if cur_follow == None:
+         raise ValueError
+      else:
+         db.session.delete(cur_follow)
+         db.session.commit()
+         print('Successfully delete id=%d follow!' % id)
+         return True
+   except Exception as e:
+      if e != ValueError:
+         db.session.rollback() # 回滚
+      print('[Error]', e, 'in delete follow: No such follow')
+      return False
+
+
+# 查询Follow的users
+def search_stars(id):
+   try:
+      assert(id != None)
+      return StarsAndFans.query.filter_by(fan_id=id).all(), StarsAndFans.query.filter_by(fan_id=id).count()
+   except Exception as e:
+      db.session.rollback() # 回滚
+      print('[Error]', e, 'in search stars: Id search')
+      return None, 0
+
+
+# 查询粉丝
+def search_fans(id):
+   try:
+      assert(id != None)
+      return StarsAndFans.query.filter_by(star_id=id).all(), StarsAndFans.query.filter_by(star_id=id).count()
+   except Exception as e:
+      db.session.rollback() # 回滚
+      print('[Error]', e, 'in search fans: Id search')
+      return None, 0
 
