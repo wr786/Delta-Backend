@@ -15,10 +15,9 @@ def is_existed(email,password):
 	try:
 		conn.ping(reconnect=True)
 		encrypted=encrypt(password)
-		sql="SELECT username, email, password, id FROM account WHERE email ='%s' and password ='%s'" %(email,encrypted)
-		cur.execute(sql)
-		result = cur.fetchall()
-		if (len(result) == 0):
+		account = AccountInfo.query.filter_by(email=email, password=encrypted).one()
+		print('is_existed:', account)
+		if account == None:
 			return False
 		else:
 			return True

@@ -12,7 +12,7 @@ def add_user(username, email, password):
         encrypted=encrypt(password)
         cur_account = AccountInfo()
         cur_account.username = username
-        cur_account.password = password
+        cur_account.password = encrypted
         cur_account.email = email
         # 注册成功时自动生成对应用户
         flag = add_user_info(cur_account.id, username, email) # password 从注册表找暂时
