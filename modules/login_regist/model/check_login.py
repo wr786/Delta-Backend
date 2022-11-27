@@ -28,11 +28,8 @@ def is_existed(email,password):
 
 def exist_user(email):
 	try:
-		conn.ping(reconnect=True)
-		sql = "SELECT username, email, password, id FROM account WHERE email ='%s'" % (email)
-		cur.execute(sql)
-		result = cur.fetchall()
-		if (len(result) == 0):
+		account = AccountInfo.query.filter_by(email=email).one()
+		if account == None:
 			return False
 		else:
 			return True
