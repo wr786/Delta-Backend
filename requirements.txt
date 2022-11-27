@@ -1,6 +1,6 @@
-flask
+flask==2.1.3
 flask_socketio
-flask-sqlalchemy
+flask-sqlalchemy==2.5.1
 pymysql
 cryptography
 flask_mail
