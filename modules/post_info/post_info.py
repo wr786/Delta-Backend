@@ -5,6 +5,16 @@ from .db import *
 
 post_info = Blueprint('post_info', __name__, url_prefix='/post_info')
 
+def get_tag_name(tag_num):
+   tagDict = {
+      "1": "淘物", "2": "找人", "3": "知事",
+      "11": "课程资料", "12": "书籍专区", "13": "日常用品",
+      "21": "课程组队", "22": "活动约人", "23": "寻找伴侣", "24": "招聘信息",
+      "31": "课程攻略", "32": "生涯指北", "33": "燕园生活", "34": "吐槽专区"
+   }
+   return tagDict.get(tag_num)
+
+
 # 插入数据
 def add_post_info(user_id, headline, tags, price_and_number, info, picture):
    try:
