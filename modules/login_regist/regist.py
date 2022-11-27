@@ -46,7 +46,8 @@ def user_regist():
                 dict['userid']=info[3]
                 return dict                       #0=注册成功   id为auto_increment
         except Exception as e:
-            print('[Error]', e, 'in regist')
-            return
+            errmsg = f'[Error] {e} in regist'
+            print(errmsg)
+            return errmsg
 
     return "/regist"

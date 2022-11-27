@@ -1,5 +1,6 @@
 from ..connect import conn
 import hashlib
+from ..db import *
 cur = conn.cursor()
 
 def login_null(email,password):
@@ -14,7 +15,7 @@ def is_existed(email,password):
 	try:
 		conn.ping(reconnect=True)
 		encrypted=encrypt(password)
-		sql="SELECT username, password, email, id FROM account WHERE email ='%s' and password ='%s'" %(email,encrypted)
+		sql="SELECT username, email, password, id FROM account WHERE email ='%s' and password ='%s'" %(email,encrypted)
 		cur.execute(sql)
 		result = cur.fetchall()
 		if (len(result) == 0):
@@ -28,7 +29,7 @@ def is_existed(email,password):
 def exist_user(email):
 	try:
 		conn.ping(reconnect=True)
-		sql = "SELECT username, password, email, id FROM account WHERE email ='%s'" % (email)
+		sql = "SELECT username, email, password, id FROM account WHERE email ='%s'" % (email)
 		cur.execute(sql)
 		result = cur.fetchall()
 		if (len(result) == 0):
@@ -41,11 +42,8 @@ def exist_user(email):
 
 def getinfo(email):
 	try:
-		conn.ping(reconnect=True)
-		sql="SELECT username, password, email, id FROM account WHERE email ='%s'" % (email)
-		cur.execute(sql)
-		result=cur.fetchone() #tuple=(username，email，password，id)
-		return result
+		account = AccountInfo.query.filter_by(email=email).one()
+		return (account.username, account.email, account.password, account.id)
 	except Exception as e:
 		print('[Error]', e, 'in getinfo')
 		return
