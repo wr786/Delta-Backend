@@ -31,13 +31,13 @@ def add_post_info(user_id, headline, tags, price_and_number, info, picture):
 def search_post_info(id=None, tags=None,  key_words=None, user_id=None, limit=15, offset=0):
    if id != None: # id精确查询
       try:
-         return PostInfo.query.filter_by(id=id).limit(limit).offset(offset).all(), PostInfo.query.filter_by(id=id).count()
+         return PostInfo.query.filter_by(id=id).order_by(PostInfo.createTime.desc()).limit(limit).offset(offset).all(), PostInfo.query.filter_by(id=id).count()
       except Exception as e:
          print('[Error]', e, 'in search info: Id search')
          return [], 0
    elif tags != None: # tags查询
       try:
-         return PostInfo.query.filter(PostInfo.tags.like(tags+'%')).limit(limit).offset(offset).all(), PostInfo.query.filter(PostInfo.tags.like(tags+'%')).count()
+         return PostInfo.query.filter(PostInfo.tags.like(tags+'%')).order_by(PostInfo.createTime.desc()).limit(limit).offset(offset).all(), PostInfo.query.filter(PostInfo.tags.like(tags+'%')).count()
       except Exception as e:
          print('[Error]', e, 'in search info: Tags search')
          return [], 0
@@ -47,19 +47,19 @@ def search_post_info(id=None, tags=None,  key_words=None, user_id=None, limit=15
          for word in key_words:
             re_str = re_str + word + '%'
          re_str += '%'
-         return PostInfo.query.filter(PostInfo.headline.like(re_str)).limit(limit).offset(offset).all(), PostInfo.query.filter(PostInfo.headline.like(re_str)).count()
+         return PostInfo.query.filter(PostInfo.headline.like(re_str)).order_by(PostInfo.createTime.desc()).limit(limit).offset(offset).all(), PostInfo.query.filter(PostInfo.headline.like(re_str)).count()
       except Exception as e:
          print('[Error]', e, 'in search info: Key Words search')
          return [], 0
    elif user_id: # 查询用户发布的post
       try: 
-         return PostInfo.query.filter_by(user_id=user_id).limit(limit).offset(offset).all(), PostInfo.query.filter_by(user_id=user_id).count()
+         return PostInfo.query.filter_by(user_id=user_id).order_by(PostInfo.createTime.desc()).limit(limit).offset(offset).all(), PostInfo.query.filter_by(user_id=user_id).count()
       except Exception as e:
          print('[Error]', e, 'in search info: User_id search')
          return [], 0
    else:
       try:
-         return PostInfo.query.limit(limit).offset(offset).all(), PostInfo.query.count()
+         return PostInfo.query.order_by(PostInfo.createTime.desc()).limit(limit).offset(offset).all(), PostInfo.query.count()
       except Exception as e:
          print('[Error]', e, 'in search info: No-limit search')
          return [], 0

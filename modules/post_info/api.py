@@ -3,6 +3,7 @@ from .post_info import *
 from .comment import *
 from ..user_info_function import search_user_info
 import json
+from ..user_info_function import search_user_info
 
 post_blue=Blueprint('post',__name__,url_prefix='/post')
 
@@ -13,7 +14,7 @@ def new_post():
     flag = add_post_info(
         int(message['user_id']), 
         message['headline'], 
-        message['tags'], 
+        message['tags'][-1], 
         float(message['price_and_number']) if message['price_and_number'] != '' else 0, 
         message['info'], 
         message['picture']
@@ -29,6 +30,8 @@ def new_post():
 def show_post():
     message = {}
     message['tags'] = request.args.get('tags')
+    if isinstance(message['tags'], list):
+        message['tags'] = message['tags'][-1]
     message['cur_page'] = int(request.args.get('cur_page'))
     limit = 15
     res, total_post = search_post_info(
@@ -41,7 +44,7 @@ def show_post():
     else:
         ret = []
         for per in res:
-            ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
+            ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture, 'createTime': per.createTime.strftime( '%Y-%m-%d %H:%M:%S' )})
         return {'code': 0, 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post}
 
 
@@ -65,7 +68,7 @@ def search_by_key_words():
     else:
         ret = []
         for per in res:
-            ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
+            ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture, 'createTime': per.createTime.strftime( '%Y-%m-%d %H:%M:%S' )})
         return {'code': 0, 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post}
 
 
@@ -76,13 +79,18 @@ def open_post():
     res, _ = search_post_info(id=pid)
     if res == []:
         print(f'No such id!: {pid}')
-        return {'code': -1, 'id':None, 'headline':None, 'tags':None, 'price_and_number': None, 'info':None, 'picture':None}
+        return {'code': -1, 'id':None, 'headline':None, 'tags':None, 'price_and_number': None, 'info':None, 'picture':None, 'createTIme': None, 'user_id': None, 'user_name': None, 'user_picture': None}
     elif len(res) > 1:
         print(f'Same id for post info!: {pid}')
-        return {'code': -1, 'id':None, 'headline':None, 'tags':None, 'price_and_number': None, 'info':None, 'picture':None}
+        return {'code': -1, 'id':None, 'headline':None, 'tags':None, 'price_and_number': None, 'info':None, 'picture':None, 'createTime': None, 'user_id': None, 'user_name': None, 'user_picture': None}
     else:
         res = res[0] # 肯定只有一个
-        return {'code': 0, 'id': res.id, 'headline': res.headline, 'tags': res.tags, 'price_and_number': res.price_and_number, 'info': res.info, 'picture': res.picture}
+        # 还要找到user的id、姓名和头像
+        user = search_user_info(res.user_id)
+        if user == None:
+            print(f'None user post this!')
+            return {'code': -1, 'id':None, 'headline':None, 'tags':None, 'price_and_number': None, 'info':None, 'picture':None, 'createTime': None, 'user_id': None, 'user_name': None, 'user_picture': None}
+        return {'code': 0, 'id': res.id, 'headline': res.headline, 'tags': res.tags, 'price_and_number': res.price_and_number, 'info': res.info, 'picture': res.picture, 'createTime': res.createTime.strftime( '%Y-%m-%d %H:%M:%S' ), 'user_id': user.id, 'user_name': user.name, 'user_picture': user.picture}
 
 
 #修改post
@@ -125,12 +133,12 @@ def search_user_post():
         offset=(message['cur_page']-1)*15
     )
     if total_post == 0:
-        return {'code': -1, 'lst': [], 'cur_page': message['cur_page'], 'total_post': total_post}
+        return {'code': -1, 'lst': [], 'cur_page': message['cur_page'], 'total_post': total_post, 'date': None, 'time': None, 'tags': None}
     else:
         ret = []
         for per in res:
-            ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture})
-        return {'code': 0, 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post}
+            ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture, 'date': per.createTime.strftime( '%Y-%m-%d' ), 'time': per.createTime.strftime( '%H:%M:%S' ), 'tags': per.tags[0:2]})
+        return {'code': 0, 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post, 'date': None, 'time': None, 'tags': None}
         
 
 @post_blue.route('/comment/add',methods=['POST'])

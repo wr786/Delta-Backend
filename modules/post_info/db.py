@@ -13,10 +13,11 @@ class PostInfo(db.Model):
    price_and_number = db.Column(db.Float)
    info = db.Column(db.String(200))
    picture = db.Column(db.String(5000)) 
-   # createTime = db.Column(db.DateTime, default=datetime.now)
+   createTime = db.Column(db.DateTime, default=datetime.now, index=True)
 
    def __init__(self, **kwargs):
         super(PostInfo, self).__init__(**kwargs)
+
 
 class Comment(db.Model):
     __tablename__ = 'comment'
