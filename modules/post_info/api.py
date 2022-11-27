@@ -137,7 +137,7 @@ def search_user_post():
     else:
         ret = []
         for per in res:
-            ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture, 'date': per.createTime.strftime( '%Y-%m-%d' ), 'time': per.createTime.strftime( '%H:%M:%S' ), 'tags': per.tags[0:2]})
+            ret.append({'post_id': per.id, 'title': per.headline, 'imgUrl': per.picture, 'date': per.createTime.strftime( '%Y-%m-%d' ), 'time': per.createTime.strftime( '%H:%M:%S' ), 'tags': get_tag_name(per.tags[:2])})
         return {'code': 0, 'lst': ret, 'cur_page': message['cur_page'], 'total_post': total_post, 'date': None, 'time': None, 'tags': None}
         
 
