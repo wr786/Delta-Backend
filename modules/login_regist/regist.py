@@ -30,7 +30,7 @@ def user_regist():
                 dict['regist_code']=1
                 dict['regist_message']='fail:email has been registered'
                 return dict                        #1=用户邮箱已存在
-            elif exist_name(email):
+            elif exist_name(username):
                 dict['regist_code']=4
                 dict['regist_message']='fail:username has been registered'
                 return dict                        #1=用户名已存在
