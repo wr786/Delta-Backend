@@ -1,6 +1,6 @@
 from flask import Blueprint,request,render_template,redirect,session
 from .model.check_regist import add_user,check_pku,regist_null
-from .model.check_login import getinfo,is_existed,exist_user,login_null
+from .model.check_login import getinfo,is_existed,exist_user,login_null,exist_name
 from .model.check_cache import check_captcha
 import json
 
@@ -29,7 +29,11 @@ def user_regist():
             elif exist_user(email):
                 dict['regist_code']=1
                 dict['regist_message']='fail:email has been registered'
-                return dict                        #1=用户已存在
+                return dict                        #1=用户邮箱已存在
+            elif exist_name(username):
+                dict['regist_code']=4
+                dict['regist_message']='fail:username has been registered'
+                return dict                        #1=用户名已存在
             elif not check_captcha(email,captcha) and not captcha_skip:   #测试需要跳过captcha验证用，部署时请删除 and 后半句
                 dict['regist_code']=3
                 dict['regist_message']='fail:captcha wrong or expired'
