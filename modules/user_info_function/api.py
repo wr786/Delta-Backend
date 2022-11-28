@@ -26,7 +26,10 @@ def new_user():
 def show_user_info():
     uid = int(request.args.get('uid'))
     res = search_user_info(id=uid)
-    return {'code': 0, 'id': res.id, 'name': res.name, 'email': res.email, 'info': res.info, 'picture': res.picture}
+    if res != None:
+        return {'code': 0, 'id': res.id, 'name': res.name, 'email': res.email, 'info': res.info, 'picture': res.picture}
+    else:
+        return {'code': -1, "msg": f"User(uid={uid}) not found!"}
 
 
 #修改用户信息
