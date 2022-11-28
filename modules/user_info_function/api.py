@@ -22,14 +22,14 @@ def new_user():
 
 
 #查询用户信息
-@user_blue.route('/<uid>', methods=['GET'])
-def show_user_info(uid):
+@user_blue.route('/', methods=['GET'])
+def show_user_info():
+    uid = int(request.args.get('uid'))
     res = search_user_info(id=uid)
-    if len(res)==1:    #精确ID查询应当只有一个对应用户信息
-        res = res[0]
+    if res != None:
         return {'code': 0, 'id': res.id, 'name': res.name, 'email': res.email, 'info': res.info, 'picture': res.picture}
     else:
-        return {'code': -1, 'id': None, 'name': None, 'email': None, 'info': None, 'picture': None}
+        return {'code': -1, "msg": f"User(uid={uid}) not found!"}
 
 
 #修改用户信息

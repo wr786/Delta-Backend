@@ -2,6 +2,7 @@ from ..connect import conn
 import re
 import hashlib
 from ...user_info_function import add_user_info
+from ..db import *
 
 cur = conn.cursor()
 
@@ -9,20 +10,23 @@ def add_user(username, email, password):
     try:
         conn.ping(reconnect=True)
         encrypted=encrypt(password)
-        sql = "INSERT INTO account(username, email, password) VALUES ('%s','%s','%s')" %(username, email, encrypted)
+        cur_account = AccountInfo()
+        cur_account.username = username
+        cur_account.password = encrypted
+        cur_account.email = email
         # 注册成功时自动生成对应用户
-        flag = add_user_info(username, email) # password 从注册表找暂时
+        flag = add_user_info(cur_account.id, username, email) # password 从注册表找暂时
         if flag:
-            print('add_user success')
-            cur.execute(sql)
-            conn.commit()  # 对数据库内容有改变，需要commit()
+            db.session.add(cur_account)
+            db.session.commit() # 对数据库内容有改变，需要commit()
             print('register and add_user success')
+            return True
         else:
             print('[Error] in add_user')
             raise NotImplementedError
     except Exception as e:
         print('[Error]', e, 'in register and add_user')
-        return
+        return False
 
 def check_pku(email):
     try:
@@ -34,7 +38,7 @@ def check_pku(email):
             return False
     except Exception as e:
         print('[Error]', e, 'in check_pku')
-        return
+        return False
 
 
 def regist_null(username,email,password):
@@ -45,7 +49,8 @@ def regist_null(username,email,password):
             return False
     except Exception as e:
         print('[Error]', e, 'in regist_null')
-        return
+        return False
+
 
 def encrypt(pwd): 
     sha = hashlib.sha256(pwd.encode('utf-8'))
