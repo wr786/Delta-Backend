@@ -36,6 +36,17 @@ def exist_user(email):
 		print('[Error]', e, 'in exist_user')
 		return
 
+def exist_name(username):
+	try:
+		account = AccountInfo.query.filter_by(username=username).one()
+		if account == None:
+			return False
+		else:
+			return True
+	except Exception as e:
+		print('[Error]', e, 'in exist_user')
+		return
+
 def getinfo(email):
 	try:
 		account = AccountInfo.query.filter_by(email=email).one()
