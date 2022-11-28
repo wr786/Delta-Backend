@@ -12,7 +12,9 @@ def user_logout():
             data=json.loads(request.data)
             logout=data.get('logout')
             if logout==True:
-                session.clear()
+                session.pop('userid')
+                session.pop('username')
+                session.pop('email')
                 dict={}
                 dict['logout_message']='success: logout'
                 dict['logout_code']=1
