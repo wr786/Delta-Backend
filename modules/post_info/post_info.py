@@ -27,7 +27,7 @@ def add_post_info(user_id, headline, tags, price_and_number, info, picture):
       cur_info.picture = picture
       db.session.add(cur_info)
       db.session.commit()
-      print('Successfully add id=%d post info!' % cur_info.id)
+      print('[Info] Successfully add id=%d post info!' % cur_info.id)
       return True
 
    except Exception as e:
@@ -89,7 +89,7 @@ def delete_post_info(id):
       else:
          db.session.delete(cur_info)
          db.session.commit()
-         print('Successfully delete id=%d post info!' % id)
+         print('[Info] Successfully delete id=%d post info!' % id)
          return True
    except Exception as e:
       if e != ValueError:
@@ -122,7 +122,7 @@ def change_post_info(id, headline=None, tags=None, price_and_number=None, info=N
          if picture:
             cur_info.picture =picture
          db.session.commit()
-         print('Successfully change id=%d post info!' % id)
+         print('[Info] Successfully change id=%d post info!' % id)
          return True
    except Exception as e:
       if e != ValueError:

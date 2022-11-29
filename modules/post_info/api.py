@@ -53,9 +53,9 @@ def show_post():
 def search_by_key_words():
     message = {}
     message['key_words'] = request.args.get('key_words')
-    message['cur_page'] = request.args.get('cur_page')
+    message['cur_page'] = int(request.args.get('cur_page'))
     # FOR DEBUG：message['cur_page'] = 1
-    print('search_by_key_words: ', message)
+    print("[Info]", 'search_by_key_words: ', message)
     limit = 15
     key_words = message['key_words'].split() # 根据空白符分隔
     res, total_post = search_post_info(
@@ -78,17 +78,17 @@ def open_post():
     pid = request.args.get('id')
     res, _ = search_post_info(id=pid)
     if res == []:
-        print(f'No such id!: {pid}')
+        print(f'[Error] No such id!: {pid}')
         return {'code': -1, 'id':None, 'headline':None, 'tags':None, 'price_and_number': None, 'info':None, 'picture':None, 'createTIme': None, 'user_id': None, 'user_name': None, 'user_picture': None}
     elif len(res) > 1:
-        print(f'Same id for post info!: {pid}')
+        print(f'[Error] Same id for post info!: {pid}')
         return {'code': -1, 'id':None, 'headline':None, 'tags':None, 'price_and_number': None, 'info':None, 'picture':None, 'createTime': None, 'user_id': None, 'user_name': None, 'user_picture': None}
     else:
         res = res[0] # 肯定只有一个
         # 还要找到user的id、姓名和头像
         user = search_user_info(res.user_id)
         if user == None:
-            print(f'None user post this!')
+            print(f'[Error] None user post this! pid={pid}')
             return {'code': -1, 'id':None, 'headline':None, 'tags':None, 'price_and_number': None, 'info':None, 'picture':None, 'createTime': None, 'user_id': None, 'user_name': None, 'user_picture': None}
         return {'code': 0, 'id': res.id, 'headline': res.headline, 'tags': res.tags, 'price_and_number': res.price_and_number, 'info': res.info, 'picture': res.picture, 'createTime': res.createTime.strftime( '%Y-%m-%d %H:%M:%S' ), 'user_id': user.id, 'user_name': user.name, 'user_picture': user.picture}
 

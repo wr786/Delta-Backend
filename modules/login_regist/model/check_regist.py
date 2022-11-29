@@ -19,7 +19,7 @@ def add_user(username, email, password):
         if flag:
             db.session.add(cur_account)
             db.session.commit() # 对数据库内容有改变，需要commit()
-            print('register and add_user success')
+            print('[Info] register and add_user success')
             return True
         else:
             print('[Error] in add_user')

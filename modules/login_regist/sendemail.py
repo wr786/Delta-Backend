@@ -33,10 +33,10 @@ def sendemail():
             mail.send(msg)
             dict['sendemail_code']=0
             dict['sendemail_message']='success: send an email'
-            print("send captcha=%s to %s" % (captcha,email))
+            print("[Info] send captcha=%s to %s" % (captcha,email))
             cache.set(email,captcha,timeout=1000)  #captcha expired in 1000s
             cap=cache.get(email)
-            print("get captcha again : %s captcha: %s"%(email,cap))        
+            print("[Info] get captcha again : %s captcha: %s"%(email,cap))        
             #cat=cache.get("name")
             #print("name %s" % cat.decode('utf-8'))
             #car=cache.get("noname")
