@@ -18,7 +18,7 @@ def add_user_info(id, name, email, info='testInfo', picture='testPicture'):
       cur_info.picture = picture
       db.session.add(cur_info)
       db.session.commit()
-      print('Successfully add id=%d user info!' % cur_info.id)
+      print('[Info] Successfully add id=%d user info!' % cur_info.id)
       return True
    except Exception as e:
       print('[Error]', e, 'in add user info')
@@ -59,7 +59,7 @@ def delete_user_info(id):
       else:
          db.session.delete(cur_info)
          db.session.commit()
-         print('Successfully delete id=%d user info!' % id)
+         print('[Info] Successfully delete id=%d user info!' % id)
          return True
    except Exception as e:
       if e != ValueError:
@@ -89,7 +89,7 @@ def change_user_info(id,  name=None, email=None, info=None, picture=None):
          if picture:
             cur_info.picture =picture
          db.session.commit()
-         print('Successfully change id=%d user info!' % id)
+         print('[Info] Successfully change id=%d user info!' % id)
          return True
    except Exception as e:
       if e != ValueError:
@@ -102,13 +102,13 @@ def change_user_info(id,  name=None, email=None, info=None, picture=None):
 def star_user(fan_id, star_id):
    try:
       if StarsAndFans.query.filter_by(fan_id=fan_id, star_id=star_id).first(): # 已经存在follow了
-         print('Already followed')
+         print('[Error] Already followed')
          raise ValueError
       else:
          cur_follow = StarsAndFans()
          cur_follow.fan_id = fan_id
          cur_follow.star_id = star_id
-         print('Successfully add id=%d follow info!' % cur_follow.id)
+         print('[Info] Successfully add id=%d follow info!' % cur_follow.id)
          return True
    except Exception as e:
       print('[Error]', e, 'in add star user')
@@ -129,7 +129,7 @@ def not_star_user(fan_id, star_id):
       else:
          db.session.delete(cur_follow)
          db.session.commit()
-         print('Successfully delete id=%d follow!' % id)
+         print('[Info] Successfully delete id=%d follow!' % id)
          return True
    except Exception as e:
       if e != ValueError:
