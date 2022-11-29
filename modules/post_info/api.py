@@ -53,7 +53,7 @@ def show_post():
 def search_by_key_words():
     message = {}
     message['key_words'] = request.args.get('key_words')
-    message['cur_page'] = request.args.get('cur_page')
+    message['cur_page'] = int(request.args.get('cur_page'))
     # FOR DEBUG：message['cur_page'] = 1
     print('search_by_key_words: ', message)
     limit = 15
