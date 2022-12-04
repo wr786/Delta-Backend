@@ -45,13 +45,23 @@ def search_post_info(id=None, tags=None,  key_words=None, user_id=None, limit=15
       except Exception as e:
          print('[Error]', e, 'in search info: Id search')
          return [], 0
+   elif tags != None and key_words != None: # tags里进行key_words查询
+      try:
+         re_str = '%'
+         for word in key_words:
+            re_str = re_str + word + '%'
+         re_str += '%'
+         return PostInfo.query.filter(PostInfo.tags.like(tags+'%')).filter(PostInfo.headline.like(re_str)).order_by(PostInfo.createTime.desc()).limit(limit).offset(offset).all(), PostInfo.query.filter(PostInfo.tags.like(tags+'%')).filter(PostInfo.headline.like(re_str)).count()
+      except Exception as e:
+         print('[Error]', e, 'in search info: Tags search')
+         return [], 0
    elif tags != None: # tags查询
       try:
          return PostInfo.query.filter(PostInfo.tags.like(tags+'%')).order_by(PostInfo.createTime.desc()).limit(limit).offset(offset).all(), PostInfo.query.filter(PostInfo.tags.like(tags+'%')).count()
       except Exception as e:
          print('[Error]', e, 'in search info: Tags search')
          return [], 0
-   elif key_words: # key words查询 是一个list
+   elif key_words != None: # 全站key words查询 是一个list
       try: 
          re_str = '%'
          for word in key_words:
@@ -61,7 +71,7 @@ def search_post_info(id=None, tags=None,  key_words=None, user_id=None, limit=15
       except Exception as e:
          print('[Error]', e, 'in search info: Key Words search')
          return [], 0
-   elif user_id: # 查询用户发布的post
+   elif user_id != None: # 查询用户发布的post
       try: 
          return PostInfo.query.filter_by(user_id=user_id).order_by(PostInfo.createTime.desc()).limit(limit).offset(offset).all(), PostInfo.query.filter_by(user_id=user_id).count()
       except Exception as e:

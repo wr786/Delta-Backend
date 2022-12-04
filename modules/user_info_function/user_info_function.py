@@ -101,7 +101,10 @@ def change_user_info(id,  name=None, email=None, info=None, picture=None):
 # Follow某人
 def star_user(fan_id, star_id):
    try:
-      if StarsAndFans.query.filter_by(fan_id=fan_id, star_id=star_id).first(): # 已经存在follow了
+      if fan_id == star_id:
+         print('[Error] Cannot star oneself')
+         raise ValueError
+      elif StarsAndFans.query.filter_by(fan_id=fan_id, star_id=star_id).first(): # 已经存在follow了
          print('[Error] Already followed')
          raise ValueError
       else:
