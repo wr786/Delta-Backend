@@ -30,10 +30,8 @@ def new_post():
 def show_post():
     message = {}
     message['tags'] = request.args.get('tags')
-    if isinstance(message['tags'], list):
-        message['tags'] = message['tags'][-1]
-    print('DEBUG: message[\'tags\']=', message['tags'])
     message['cur_page'] = int(request.args.get('cur_page'))
+    print('DEBUG: message=', message)
     limit = 15
     res, total_post = search_post_info(
         tags=message['tags'], 
@@ -55,11 +53,13 @@ def search_by_key_words():
     message = {}
     message['key_words'] = request.args.get('key_words')
     message['cur_page'] = int(request.args.get('cur_page'))
+    message['tags'] = request.args.get('tags')
     # FOR DEBUG：message['cur_page'] = 1
     print("[Info]", 'search_by_key_words: ', message)
     limit = 15
     key_words = message['key_words'].split() # 根据空白符分隔
     res, total_post = search_post_info(
+        tags=message['tags'],
         key_words=key_words,
         limit=limit, 
         offset=(message['cur_page']-1)*15
